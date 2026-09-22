@@ -134,6 +134,7 @@ Admin.NET.Web.Core
 | `TaskPlan101` | 任务的准备及实施计划项目 |
 | `TaskPerson101` | 任务团队、系统岗位与所选人员 |
 | `TaskDevice101` | 某任务按系统选入的设备 |
+| `TaskTransferRecord101` | 某任务在指定测量传递表中的通道配置；异构字段以 PostgreSQL `jsonb` 保存 |
 | `TaskDocument101` | 某任务按类型选入的文件 |
 | `WorkflowNode101` | 可复用的部门、区域、工序、工步和岗位流程节点 |
 | `TaskWorkflow101` | 某任务选择的流程节点及顺序 |
@@ -219,9 +220,11 @@ GET /api/101/tasks/{taskId}/preparation
 PUT /api/101/tasks/{taskId}/personnel
 PUT /api/101/tasks/{taskId}/devices
 PUT /api/101/tasks/{taskId}/documents
+GET /api/101/tasks/{taskId}/transfers/{tableId}
+PUT /api/101/tasks/{taskId}/transfers/{tableId}
 ```
 
-准备接口接受前端最终选择集合，后端计算新增和删除项，并通过唯一约束保证幂等。接口不得相信前端传入的人员、设备或文件显示文本，必须根据 ID 查询有效来源记录。
+准备接口接受前端最终选择集合，后端计算新增和删除项，并通过唯一约束保证幂等。接口不得相信前端传入的人员、设备或文件显示文本，必须根据 ID 查询有效来源记录。测量传递表按前端已有 `tableId` 分区保存，每行保留稳定 ID、显示顺序和经过字段白名单校验的 `jsonb` 数据，不接受任意表名或任意服务器字段。
 
 ### 9.4 流程、工步与签署
 
