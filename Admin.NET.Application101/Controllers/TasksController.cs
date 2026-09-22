@@ -1,5 +1,6 @@
 using Admin.NET.Application101.Dtos.Common;
 using Admin.NET.Application101.Dtos.Tasks;
+using Admin.NET.Application101.Dtos.Operations;
 using Admin.NET.Application101.Services;
 
 namespace Admin.NET.Application101.Controllers;
@@ -31,4 +32,12 @@ public sealed class TasksController(TaskService101 service) : ControllerBase
     [HttpPut("{id:guid}/status")]
     [ApiPermission("101:task:status")]
     public Task SetStatus(Guid id, ChangeTaskStatusInput input) => service.SetStatusAsync(id, input.Status);
+
+    [HttpGet("{id:guid}/workflow")]
+    [ApiPermission("101:workflow-selection:read")]
+    public Task<TaskWorkflowSelectionDto> GetWorkflow(Guid id) => service.GetWorkflowAsync(id);
+
+    [HttpPut("{id:guid}/workflow")]
+    [ApiPermission("101:workflow-selection:update")]
+    public Task SaveWorkflow(Guid id, SaveTaskWorkflowInput input) => service.SaveWorkflowAsync(id, input);
 }

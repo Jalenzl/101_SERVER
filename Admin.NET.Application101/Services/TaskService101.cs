@@ -1,5 +1,6 @@
 using Admin.NET.Application101.Dtos.Common;
 using Admin.NET.Application101.Dtos.Tasks;
+using Admin.NET.Application101.Dtos.Operations;
 using Admin.NET.Core101.Domain;
 
 namespace Admin.NET.Application101.Services;
@@ -101,6 +102,84 @@ public sealed class TaskService101(SqlSugarRepository<Task101> repository) : ITr
         item.Status = status;
         item.UpdateTime = DateTime.UtcNow;
         await repository.AsUpdateable(item).UpdateColumns(row => new { row.Status, row.UpdateTime }).ExecuteCommandAsync();
+    }
+
+    public async Task<TaskWorkflowSelectionDto> GetWorkflowAsync(Guid taskId)
+    {
+        await FindAsync(taskId);
+        var ids = await repository.Context.Queryable<TaskWorkflow101>().Where(item => item.TaskId == taskId)
+            .OrderBy(item => item.OrderNo).Select(item => item.WorkflowNodeId).ToListAsync();
+        return new TaskWorkflowSelectionDto(ids);
+    }
+
+    public async Task SaveWorkflowAsync(Guid taskId, SaveTaskWorkflowInput input)
+    {
+        var task = await FindAsync(taskId);
+        EnsureMutable(task.Status);
+        var requested = input.WorkflowNodeIds.Distinct().ToArray();
+        var database = repository.Context;
+        var available = await database.Queryable<WorkflowNode101>()
+            .Where(item => item.Enabled && item.Department == task.Department).ToListAsync();
+        var existingOperations = await database.Queryable<Operation101>().Where(item => item.TaskId == taskId).ToListAsync();
+        var operationIds = existingOperations.Select(item => item.Id).ToArray();
+        var usedOperationIds = new HashSet<Guid>();
+        if (operationIds.Length > 0)
+        {
+            var checkedIds = await database.Queryable<OperationCheck101>()
+                .Where(item => operationIds.Contains(item.OperationId)).Select(item => item.OperationId).ToListAsync();
+            var signedIds = await database.Queryable<OperationSignature101>()
+                .Where(item => item.Scope == "operation" && operationIds.Contains(item.ScopeId))
+                .Select(item => item.ScopeId).ToListAsync();
+            usedOperationIds.UnionWith(checkedIds);
+            usedOperationIds.UnionWith(signedIds);
+        }
+
+        OperationPlan plan;
+        try
+        {
+            plan = WorkflowOperationPlanner.Plan(requested, available, existingOperations, usedOperationIds);
+        }
+        catch (ArgumentException error)
+        {
+            throw Oops.Oh(error.Message).StatusCode(409);
+        }
+        if (plan.BlockedOperationIds.Count > 0)
+            throw Oops.Oh("工步已有执行数据，不能取消对应流程。").StatusCode(409);
+
+        var existingLinks = await database.Queryable<TaskWorkflow101>().Where(item => item.TaskId == taskId).ToListAsync();
+        var linkByNode = existingLinks.ToDictionary(item => item.WorkflowNodeId);
+        var linkDelta = SelectionReconciler.Compare(linkByNode.Keys, requested);
+        await database.Ado.BeginTranAsync();
+        try
+        {
+            if (plan.RemoveOperationIds.Count > 0)
+                await database.Deleteable<Operation101>().In(plan.RemoveOperationIds).ExecuteCommandAsync();
+            var removeNodeIds = linkDelta.Remove.ToArray();
+            if (removeNodeIds.Length > 0)
+                await database.Deleteable<TaskWorkflow101>()
+                    .Where(item => item.TaskId == taskId && removeNodeIds.Contains(item.WorkflowNodeId)).ExecuteCommandAsync();
+            var orderByNode = requested.Select((id, index) => (id, order: index + 1)).ToDictionary(item => item.id, item => item.order);
+            var newLinks = linkDelta.Add.Select(id => new TaskWorkflow101
+                { TaskId = taskId, WorkflowNodeId = id, OrderNo = orderByNode[id] }).ToList();
+            if (newLinks.Count > 0) await database.Insertable(newLinks).ExecuteCommandAsync();
+            var retainedLinks = existingLinks.Where(item => orderByNode.ContainsKey(item.WorkflowNodeId)).ToList();
+            foreach (var link in retainedLinks) link.OrderNo = orderByNode[link.WorkflowNodeId];
+            if (retainedLinks.Count > 0)
+                await database.Updateable(retainedLinks).UpdateColumns(item => new { item.OrderNo }).ExecuteCommandAsync();
+            var operations = plan.CreateFrom.Select(node => new Operation101
+            {
+                TaskId = taskId, WorkflowNodeId = node.Id, Code = $"OP-{node.OrderNo:000}",
+                Phase = node.Area, Process = node.Process, Step = node.Step, Post = node.Post,
+                OperationDate = task.PlannedDate, Status = OperationStatus101.NotStarted, OrderNo = node.OrderNo
+            }).ToList();
+            if (operations.Count > 0) await database.Insertable(operations).ExecuteCommandAsync();
+            await database.Ado.CommitTranAsync();
+        }
+        catch
+        {
+            await database.Ado.RollbackTranAsync();
+            throw;
+        }
     }
 
     private async Task EnsureCompletionReadyAsync(Guid taskId)
