@@ -24,7 +24,7 @@ foreach ($relativePath in $files) {
     if ([regex]::IsMatch($content, $tcpPasswordPattern)) {
         $findings.Add("$relativePath [TCP101 database password value]")
     }
-    $connectionPattern = '(?i)Host\s*=\s*(?!<)[^;\r\n]+;[^\r\n]*Pass' + 'word\s*=\s*(?!<)[^;`\r\n]+'
+    $connectionPattern = '(?i)Host\s*=\s*(?![<$%{])[^;\r\n]+;[^\r\n]*Pass' + 'word\s*=\s*(?![<$%{])[^;`\r\n]+'
     if ([regex]::IsMatch($content, $connectionPattern)) {
         $findings.Add("$relativePath [password-bearing connection string]")
     }

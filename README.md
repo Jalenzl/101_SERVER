@@ -92,3 +92,12 @@ dotnet build Admin.NET.sln --configuration Release
 pwsh -File scripts/Test-RepositoryHygiene.ps1
 pwsh -File scripts/Test-Secrets.ps1
 ```
+
+真库测试默认跳过。准备好本机 `tcp101` 后，可显式启用；测试只创建并最终删除自己生成的 `test_<guid>` Schema，绝不删除 `public`：
+
+```powershell
+$env:TCP101_RUN_POSTGRES_TESTS = '1'
+dotnet test tests/Admin.NET.Application101.Tests/Admin.NET.Application101.Tests.csproj --filter PostgreSqlInitializationTests
+```
+
+运行中的服务可用 `pwsh -File scripts/Test-PostgreSqlSmoke.ps1` 验证登录到签名的完整主链。该脚本只从 `TCP101_TEST_ADMIN_ACCOUNT` 和 `TCP101_TEST_ADMIN_PASSWORD` 读取测试凭据，不输出凭据或令牌。
