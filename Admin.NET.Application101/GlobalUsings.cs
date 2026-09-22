@@ -1,6 +1,14 @@
+global using Admin.NET.Application101.Authorization;
+global using Admin.NET.Core;
+global using Admin.NET.Core101.Entity;
+global using Admin.NET.Core101.Enum;
+global using Furion.DependencyInjection;
+global using Furion.FriendlyException;
+global using Microsoft.AspNetCore.Mvc;
 global using Microsoft.Extensions.Configuration;
 global using Microsoft.Extensions.DependencyInjection;
 global using Microsoft.Extensions.Diagnostics.HealthChecks;
 global using Microsoft.Extensions.Hosting;
 global using Microsoft.Extensions.Options;
 global using SqlSugar;
+global using System.ComponentModel.DataAnnotations;
