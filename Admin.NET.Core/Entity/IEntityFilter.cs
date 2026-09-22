@@ -3,7 +3,7 @@
 /// <summary>
 /// 假删除接口过滤器
 /// </summary>
-internal interface IDeletedFilter
+public interface IDeletedFilter
 {
     /// <summary>
     /// 软删除
