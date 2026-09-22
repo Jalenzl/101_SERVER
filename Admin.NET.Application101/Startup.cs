@@ -37,6 +37,7 @@ public sealed class Startup : AppStartup
         await InsertWhenEmpty(database, TaskSeed101.TaskDocuments);
         await InsertWhenEmpty(database, TaskSeed101.TaskWorkflows);
         await InsertWhenEmpty(database, TaskSeed101.TransferRecords);
+        await SeedPermissionsAsync(database);
     }
 
     private static async Task InsertWhenEmpty<TEntity>(
@@ -47,6 +48,21 @@ public sealed class Startup : AppStartup
             return;
 
         await database.Insertable(rows.ToList()).ExecuteCommandAsync();
+    }
+
+    private static async Task SeedPermissionsAsync(ISqlSugarClient database)
+    {
+        foreach (var menu in MenuSeed101.Menus)
+        {
+            if (!await database.Queryable<SysMenu>().AnyAsync(item => item.Id == menu.Id))
+                await database.Insertable(menu).ExecuteCommandAsync();
+        }
+
+        foreach (var roleMenu in RoleMenuSeed101.Items)
+        {
+            if (!await database.Queryable<SysRoleMenu>().AnyAsync(item => item.Id == roleMenu.Id))
+                await database.Insertable(roleMenu).ExecuteCommandAsync();
+        }
     }
 }
 
