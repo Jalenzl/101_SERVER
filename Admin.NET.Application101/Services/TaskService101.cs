@@ -50,7 +50,7 @@ public sealed class TaskService101(SqlSugarRepository<Task101> repository) : ITr
     public async Task UpdateAsync(Guid id, UpdateTaskInput input)
     {
         var item = await FindAsync(id);
-        TaskWriteGuard.EnsureMutable(item.Status);
+        EnsureMutable(item.Status);
         Map(input, item);
         item.UpdateTime = DateTime.UtcNow;
         await repository.AsUpdateable(item).ExecuteCommandAsync();
@@ -59,7 +59,7 @@ public sealed class TaskService101(SqlSugarRepository<Task101> repository) : ITr
     public async Task DeleteAsync(Guid id)
     {
         var item = await FindAsync(id);
-        TaskWriteGuard.EnsureMutable(item.Status);
+        EnsureMutable(item.Status);
         var database = repository.Context;
         await database.Ado.BeginTranAsync();
         try
@@ -95,7 +95,7 @@ public sealed class TaskService101(SqlSugarRepository<Task101> repository) : ITr
     public async Task SetStatusAsync(Guid id, TaskStatus101 status)
     {
         var item = await FindAsync(id);
-        TaskWriteGuard.EnsureMutable(item.Status);
+        EnsureMutable(item.Status);
         if (status == TaskStatus101.Completed)
             await EnsureCompletionReadyAsync(id);
         item.Status = status;
@@ -131,4 +131,16 @@ public sealed class TaskService101(SqlSugarRepository<Task101> repository) : ITr
         new() { Items = items, Page = input.Page, PageSize = input.PageSize, Total = total };
 
     private static Exception NotFound() => Oops.Oh("记录不存在。").StatusCode(404);
+
+    private static void EnsureMutable(TaskStatus101 status)
+    {
+        try
+        {
+            TaskWriteGuard.EnsureMutable(status);
+        }
+        catch (InvalidOperationException error)
+        {
+            throw Oops.Oh(error.Message).StatusCode(409);
+        }
+    }
 }
