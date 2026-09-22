@@ -1,0 +1,11 @@
+{
+  "Cache": {
+    "Prefix": "tcp101_",
+    "CacheType": "Memory",
+    "Redis": {
+      "Configuration": "127.0.0.1:6379,defaultDatabase=5",
+      "Prefix": "tcp101_",
+      "MaxMessageSize": 1048576
+    }
+  }
+}

@@ -1,2 +1,15 @@
 .worktrees/
 .superpowers/
+bin/
+obj/
+.vs/
+.idea/
+*.user
+*.suo
+logs/
+publish/
+uploads/
+*.db
+.env
+TestResults/
+coverage/
