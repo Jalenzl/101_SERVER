@@ -1,5 +1,6 @@
 using Admin.NET.Core;
 using Admin.NET.Core.Service;
+using Admin.NET.Application101.Authorization;
 using Furion;
 using Furion.Authorization;
 using Furion.DataEncryption;
@@ -77,10 +78,11 @@ namespace Admin.NET.Web.Core
             if (App.User.FindFirst(ClaimConst.AccountType)?.Value == ((int)AccountTypeEnum.SuperAdmin).ToString())
                 return true;
 
-            // 路由名称
-            var routeName = httpContext.Request.Path.StartsWithSegments("/api")
-                ? httpContext.Request.Path.Value[5..].Replace("/", ":")
-                : httpContext.Request.Path.Value[1..].Replace("/", ":");
+            // 101 接口优先使用稳定权限名；旧 Admin.NET 接口继续兼容路径推导。
+            var endpointPermission = httpContext.GetEndpoint()?.Metadata.GetMetadata<ApiPermissionAttribute>()?.Name;
+            var routeName = endpointPermission ?? (httpContext.Request.Path.StartsWithSegments("/api")
+                ? httpContext.Request.Path.Value![5..].Replace("/", ":")
+                : httpContext.Request.Path.Value![1..].Replace("/", ":"));
 
             if (routeName.Equals("sysAuth:keepAlive", StringComparison.OrdinalIgnoreCase))
                 return true;

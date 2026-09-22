@@ -11,7 +11,10 @@ public class SysUserSeedData : ISqlSugarEntitySeedData<SysUser>
     /// <returns></returns>
     public IEnumerable<SysUser> HasData()
     {
-        var encryptPassword = CryptogramUtil.Encrypt("123456");
+        var initialCredential = Environment.GetEnvironmentVariable("TCP101_INITIAL_ADMIN_PASSWORD");
+        if (string.IsNullOrWhiteSpace(initialCredential))
+            throw new InvalidOperationException("Environment variable TCP101_INITIAL_ADMIN_PASSWORD is required.");
+        var encryptPassword = CryptogramUtil.Encrypt(initialCredential);
 
         return new[]
         {
