@@ -13,7 +13,7 @@
 ## Global Constraints
 
 - Target framework is `net10.0`; `global.json` requires .NET SDK 10.0.100 or newer feature band through roll-forward.
-- PostgreSQL database is exactly `tcp101`; schema is exactly `public`.
+- PostgreSQL database is exactly `tpc101`; schema is exactly `public`.
 - Database password is read only from `TCP101_DB_PASSWORD`; no password value or password-bearing connection string may enter version control or logs.
 - Server file root is read only from `TCP101_FILE_STORAGE_PATH`; no absolute server path may enter version control or API responses.
 - All `/api/101` endpoints except health checks require Admin.NET JWT authentication and interface permission checks.
@@ -407,7 +407,7 @@ public void Create_BuildsExpectedPostgreSqlConnectionString()
     var value = Tcp101ConnectionStringFactory.Create(options, password);
     var parsed = new Npgsql.NpgsqlConnectionStringBuilder(value);
     Assert.Equal("db", parsed.Host);
-    Assert.Equal("tcp101", parsed.Database);
+    Assert.Equal("tpc101", parsed.Database);
     Assert.Equal("public", parsed.SearchPath);
     Assert.Equal(password, parsed.Password);
 }
@@ -425,7 +425,7 @@ Expected: FAIL because the configuration types do not exist.
 
 - [ ] **Step 3: Implement exact options and connection-string construction**
 
-`Tcp101DatabaseOptions` has `Host = "localhost"`, `Port = 5432`, `Username = "postgres"`, `Database = "tcp101"`, and `Schema = "public"`. Validate that Database and Schema remain those exact values. `Create` rejects null, empty, or whitespace passwords, then uses `NpgsqlConnectionStringBuilder` or SqlSugar's PostgreSQL-compatible builder to set Host, Port, Username, Password, Database, and SearchPath without string concatenation.
+`Tcp101DatabaseOptions` has `Host = "localhost"`, `Port = 5432`, `Username = "postgres"`, `Database = "tpc101"`, and `Schema = "public"`. Validate that Database and Schema remain those exact values. `Create` rejects null, empty, or whitespace passwords, then uses `NpgsqlConnectionStringBuilder` or SqlSugar's PostgreSQL-compatible builder to set Host, Port, Username, Password, Database, and SearchPath without string concatenation.
 
 Update `Database.json` so it contains `DbType: "PostgreSQL"`, no `Password` property, no password-bearing connection string, `EnableInitDb: false`, `EnableInitTable: true`, and `EnableInitSeed: true`. In `Startup.ConfigureServices`, construct the connection string in memory before calling `AddSqlSugar` and assign it to the default `DbConnectionConfig`.
 
@@ -1210,7 +1210,7 @@ README must contain:
 2. SQL to create the database when connected as an authorized PostgreSQL administrator:
 
 ```sql
-CREATE DATABASE tcp101;
+CREATE DATABASE tpc101;
 ```
 
 3. PowerShell environment setup without a sample password value:
@@ -1270,12 +1270,12 @@ git commit -m "docs: add permissions and backend runbook"
 - Modify: `README.md`
 
 **Interfaces:**
-- Consumes: a reachable PostgreSQL `tcp101` database, `TCP101_DB_PASSWORD`, writable `TCP101_FILE_STORAGE_PATH`, and optional test admin credentials.
+- Consumes: a reachable PostgreSQL `tpc101` database, `TCP101_DB_PASSWORD`, writable `TCP101_FILE_STORAGE_PATH`, and optional test admin credentials.
 - Produces: repeatable database initialization and end-to-end smoke evidence for login → task → plan → preparation → workflow → operation → checks → signature.
 
 - [ ] **Step 1: Add opt-in PostgreSQL integration-test guards**
 
-Tests read `TCP101_RUN_POSTGRES_TESTS`. When it is not exactly `1`, they report skipped with a clear reason. When enabled, they require `TCP101_DB_PASSWORD` and create a unique schema `test_<Guid N>` inside `tcp101`, initialize only 101 test tables there, run tests, then drop only that exact schema in `finally`. They must never drop `public`, any database, or any schema not created by that test run.
+Tests read `TCP101_RUN_POSTGRES_TESTS`. When it is not exactly `1`, they report skipped with a clear reason. When enabled, they require `TCP101_DB_PASSWORD` and create a unique schema `test_<Guid N>` inside `tpc101`, initialize only 101 test tables there, run tests, then drop only that exact schema in `finally`. They must never drop `public`, any database, or any schema not created by that test run.
 
 - [ ] **Step 2: Write the initialization tests before running them**
 

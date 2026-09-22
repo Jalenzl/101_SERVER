@@ -10,7 +10,7 @@ public sealed class Tcp101DatabaseOptions
 
     public string Username { get; set; } = "postgres";
 
-    public string Database { get; set; } = "tcp101";
+    public string Database { get; set; } = "tpc101";
 
     public string Schema { get; set; } = "public";
 }

@@ -9,11 +9,11 @@ public sealed class Person101 : Entity101Base
     [SugarColumn(Length = 64)] public string Area { get; set; } = string.Empty;
     [SugarColumn(Length = 64)] public string Title { get; set; } = string.Empty;
     public bool SpecialOps { get; set; }
-    public DateOnly? SpecialOpsValidUntil { get; set; }
+    [SugarColumn(IsNullable = true)] public DateOnly? SpecialOpsValidUntil { get; set; }
     public bool Inspector { get; set; }
-    public DateOnly? InspectorValidUntil { get; set; }
+    [SugarColumn(IsNullable = true)] public DateOnly? InspectorValidUntil { get; set; }
     public bool Calibrator { get; set; }
-    public DateOnly? CalibratorValidUntil { get; set; }
+    [SugarColumn(IsNullable = true)] public DateOnly? CalibratorValidUntil { get; set; }
     public bool ProductAssurance { get; set; }
     [SugarColumn(Length = 64)] public string Contact { get; set; } = string.Empty;
     public int TestCount { get; set; }

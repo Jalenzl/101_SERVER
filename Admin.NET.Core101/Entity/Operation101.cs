@@ -12,7 +12,7 @@ public sealed class Operation101 : Entity101Base
     [SugarColumn(Length = 128)] public string Process { get; set; } = string.Empty;
     [SugarColumn(Length = 128)] public string Step { get; set; } = string.Empty;
     [SugarColumn(Length = 64)] public string Post { get; set; } = string.Empty;
-    public DateOnly? OperationDate { get; set; }
+    [SugarColumn(IsNullable = true)] public DateOnly? OperationDate { get; set; }
     [SugarColumn(Length = 1024)] public string QualityRequirement { get; set; } = string.Empty;
     [SugarColumn(Length = 1024)] public string OperationRequirement { get; set; } = string.Empty;
     [SugarColumn(Length = 1024)] public string Attention { get; set; } = string.Empty;

@@ -10,7 +10,7 @@
 
 - 运行框架使用 .NET 10。
 - ORM 延续 Admin.NET 的 SqlSugar。
-- 数据库使用 PostgreSQL，数据库名固定为 `tcp101`，Schema 固定为 `public`。
+- 数据库使用 PostgreSQL，数据库名固定为 `tpc101`，Schema 固定为 `public`。
 - 数据库必须由部署人员预先创建；应用负责连接检查、表结构初始化和种子数据初始化，不申请创建数据库所需的超级用户权限。
 - 数据库密码只读取环境变量 `TCP101_DB_PASSWORD`，不得出现在仓库文件、示例值、日志或异常详情中。
 - 文件本体保存在后端服务器磁盘，数据库只保存文件元数据和相对存储路径。
@@ -103,7 +103,7 @@ Admin.NET.Web.Core
 - Host，默认 `localhost`。
 - Port，默认 `5432`。
 - Username，默认 `postgres`。
-- Database，固定 `tcp101`。
+- Database，固定 `tpc101`。
 - SearchPath，固定 `public`。
 
 启动时由代码读取 `TCP101_DB_PASSWORD` 并在内存中组装最终连接字符串。环境变量缺失或为空时，应用在建立数据库服务前快速失败，错误消息只指出缺少变量，不输出部分或完整连接字符串。
@@ -323,7 +323,7 @@ DELETE /api/101/operations/{id}/signatures/{role}
 - 新解决方案只包含四个必要 Admin.NET 底座项目和两个 101 独立模块。
 - 旧 511、ISIP、插件、OCR、FFmpeg、第三方业务集成及其大体积资源不在新仓库中。
 - 应用在缺少 `TCP101_DB_PASSWORD` 时安全失败，仓库中不存在数据库密码。
-- 应用连接 `tcp101` 的 `public` Schema，并能初始化系统表、101 表和空表种子。
+- 应用连接 `tpc101` 的 `public` Schema，并能初始化系统表、101 表和空表种子。
 - Admin.NET 登录、用户、角色、菜单和接口权限可用。
 - 任务、人员、设备、文件、流程、工步、检查项和签署的首批 API 可从 Swagger 调用。
 - 文件能够安全上传到服务器目录并通过受保护接口下载。

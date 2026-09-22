@@ -2,6 +2,7 @@ using System.Text.Json;
 using Admin.NET.Application101.Dtos.Preparation;
 using Admin.NET.Application101.Validation;
 using Admin.NET.Core101.Domain;
+using Newtonsoft.Json.Linq;
 
 namespace Admin.NET.Application101.Services;
 
@@ -116,7 +117,7 @@ public sealed class TaskPreparationService101(SqlSugarRepository<Task101> tasks)
         var rows = await tasks.Context.Queryable<TaskTransferRecord101>()
             .Where(item => item.TaskId == taskId && item.TableId == tableId).OrderBy(item => item.OrderNo).ToListAsync();
         return rows.Select(item => new TransferRowDto(item.Id, item.OrderNo,
-            JsonDocument.Parse(item.DataJson).RootElement.Clone())).ToArray();
+            JsonDocument.Parse(item.DataJson.ToString(Newtonsoft.Json.Formatting.None)).RootElement.Clone())).ToArray();
     }
 
     public async Task SaveTransfersAsync(Guid taskId, string tableId, SaveTransferInput input)
@@ -133,7 +134,8 @@ public sealed class TaskPreparationService101(SqlSugarRepository<Task101> tasks)
                 .Where(item => item.TaskId == taskId && item.TableId == tableId).ExecuteCommandAsync();
             var rows = input.Rows.OrderBy(item => item.Order).Select(item => new TaskTransferRecord101
             {
-                Id = item.Id, TaskId = taskId, TableId = tableId, DataJson = item.Data.GetRawText(), OrderNo = item.Order
+                Id = item.Id, TaskId = taskId, TableId = tableId,
+                DataJson = JObject.Parse(item.Data.GetRawText()), OrderNo = item.Order
             }).ToList();
             if (rows.Count > 0) await database.Insertable(rows).ExecuteCommandAsync();
             await database.Ado.CommitTranAsync();

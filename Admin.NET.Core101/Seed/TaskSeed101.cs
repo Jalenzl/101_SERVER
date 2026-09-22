@@ -1,5 +1,6 @@
 using Admin.NET.Core101.Entity;
 using Admin.NET.Core101.Enum;
+using Newtonsoft.Json.Linq;
 
 namespace Admin.NET.Core101.Seed;
 
@@ -63,7 +64,7 @@ public static class TaskSeed101
             TaskId = SeedIds101.TaskHf2203,
             TableId = "upper-thrust",
             OrderNo = 1,
-            DataJson = """{"parameter":"F1","cableFront":"F1","cableBack":"F-1","daqDevice":"RDS-K00322","daqChannel":"0：1：0","daqGain":"1","daqFilter":"300","daqFormula":"2","sensorDevice":"tuiliA05-C851","sensorModel":"JDW-200","sensorValidUntil":"2026-12-22","unit":"N","remark":""}"""
+            DataJson = JObject.Parse("""{"parameter":"F1","cableFront":"F1","cableBack":"F-1","daqDevice":"RDS-K00322","daqChannel":"0：1：0","daqGain":"1","daqFilter":"300","daqFormula":"2","sensorDevice":"tuiliA05-C851","sensorModel":"JDW-200","sensorValidUntil":"2026-12-22","unit":"N","remark":""}""")
         }
     };
 

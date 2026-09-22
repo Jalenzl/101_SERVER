@@ -16,6 +16,6 @@ public sealed class Task101 : Entity101Base
     public int IgnitionCount { get; set; }
     [SugarColumn(Length = 128)] public string Client { get; set; } = string.Empty;
     public DateOnly PlannedDate { get; set; }
-    public DateTime? IgnitionTime { get; set; }
+    [SugarColumn(IsNullable = true)] public DateTime? IgnitionTime { get; set; }
     public TaskStatus101 Status { get; set; }
 }

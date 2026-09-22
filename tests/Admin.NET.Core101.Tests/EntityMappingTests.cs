@@ -1,6 +1,7 @@
 using System.Reflection;
 using Admin.NET.Core;
 using Admin.NET.Core101.Entity;
+using Newtonsoft.Json.Linq;
 using SqlSugar;
 
 namespace Admin.NET.Core101.Tests;
@@ -51,5 +52,56 @@ public sealed class EntityMappingTests
             .SingleOrDefault(item => item.IsUnique && item.IndexFields.Keys.ToHashSet().SetEquals(fields));
 
         Assert.NotNull(index);
+    }
+
+    public static TheoryData<Type, string> NullableColumns => new()
+    {
+        { typeof(Entity101Base), nameof(Entity101Base.CreateUserId) },
+        { typeof(Entity101Base), nameof(Entity101Base.CreateUserName) },
+        { typeof(Entity101Base), nameof(Entity101Base.UpdateTime) },
+        { typeof(Entity101Base), nameof(Entity101Base.UpdateUserId) },
+        { typeof(Entity101Base), nameof(Entity101Base.UpdateUserName) },
+        { typeof(Task101), nameof(Task101.IgnitionTime) },
+        { typeof(TaskPerson101), nameof(TaskPerson101.System) },
+        { typeof(Person101), nameof(Person101.SpecialOpsValidUntil) },
+        { typeof(Person101), nameof(Person101.InspectorValidUntil) },
+        { typeof(Person101), nameof(Person101.CalibratorValidUntil) },
+        { typeof(Device101), nameof(Device101.EnabledDate) },
+        { typeof(Device101), nameof(Device101.CalibrationDate) },
+        { typeof(Device101), nameof(Device101.ValidUntil) },
+        { typeof(Device101), nameof(Device101.LastMaintenance) },
+        { typeof(Device101), nameof(Device101.NextMaintenance) },
+        { typeof(Device101), nameof(Device101.CertificateStoredFileId) },
+        { typeof(Device101), nameof(Device101.MaintenanceStoredFileId) },
+        { typeof(Device101), nameof(Device101.SuggestedUses) },
+        { typeof(Device101), nameof(Device101.SuggestedYears) },
+        { typeof(Device101), nameof(Device101.OwnerPersonId) },
+        { typeof(Document101), nameof(Document101.AuthorPersonId) },
+        { typeof(Document101), nameof(Document101.PublishedAt) },
+        { typeof(Document101), nameof(Document101.CurrentStoredFileId) },
+        { typeof(Operation101), nameof(Operation101.OperationDate) },
+        { typeof(TaskPlan101), nameof(TaskPlan101.CompletedDate) },
+    };
+
+    [Theory]
+    [MemberData(nameof(NullableColumns))]
+    public void NullableColumn_IsExplicitlyNullable(Type entityType, string propertyName)
+    {
+        var property = entityType.GetProperty(propertyName);
+
+        Assert.NotNull(property);
+        Assert.True(property.GetCustomAttribute<SugarColumn>()?.IsNullable);
+    }
+
+    [Fact]
+    public void TransferData_IsMappedAsPostgreSqlJsonb()
+    {
+        var property = typeof(TaskTransferRecord101).GetProperty(nameof(TaskTransferRecord101.DataJson));
+        var column = property?.GetCustomAttribute<SugarColumn>();
+
+        Assert.NotNull(column);
+        Assert.Equal(typeof(JObject), property!.PropertyType);
+        Assert.True(column!.IsJson);
+        Assert.Equal("jsonb", column.ColumnDataType);
     }
 }

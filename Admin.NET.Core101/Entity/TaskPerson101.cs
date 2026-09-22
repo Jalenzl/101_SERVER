@@ -11,7 +11,7 @@ public sealed class TaskPerson101 : Entity101Base
     public Guid PersonId { get; set; }
     [SugarColumn(Length = 32)] public string Kind { get; set; } = string.Empty;
     [SugarColumn(Length = 64)] public string Role { get; set; } = string.Empty;
-    public SystemType101? System { get; set; }
+    [SugarColumn(IsNullable = true)] public SystemType101? System { get; set; }
     [SugarColumn(Length = 64)] public string Rig { get; set; } = string.Empty;
     [SugarColumn(Length = 64)] public string PostName { get; set; } = string.Empty;
     [SugarColumn(Length = 32)] public string PostCode { get; set; } = string.Empty;

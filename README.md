@@ -11,12 +11,12 @@ winget install Microsoft.DotNet.SDK.10
 dotnet --version
 ```
 
-`dotnet --version` 应显示 `10.x`。也可以从 [.NET 10 官方下载页](https://dotnet.microsoft.com/download/dotnet/10.0)安装。PostgreSQL 默认连接 `localhost:5432`、用户 `postgres`、数据库 `tcp101`、Schema `public`；可在 `Admin.NET.Application/Configuration/Database.json` 调整除密码外的参数。
+`dotnet --version` 应显示 `10.x`。也可以从 [.NET 10 官方下载页](https://dotnet.microsoft.com/download/dotnet/10.0)安装。PostgreSQL 默认连接 `localhost:5432`、用户 `postgres`、数据库 `tpc101`、Schema `public`；可在 `Admin.NET.Application/Configuration/Database.json` 调整除密码外的参数。
 
 使用有建库权限的 PostgreSQL 管理员连接后执行：
 
 ```sql
-CREATE DATABASE tcp101;
+CREATE DATABASE tpc101;
 ```
 
 ## 本机启动
@@ -93,7 +93,7 @@ pwsh -File scripts/Test-RepositoryHygiene.ps1
 pwsh -File scripts/Test-Secrets.ps1
 ```
 
-真库测试默认跳过。准备好本机 `tcp101` 后，可显式启用；测试只创建并最终删除自己生成的 `test_<guid>` Schema，绝不删除 `public`：
+真库测试默认跳过。准备好本机 `tpc101` 后，可显式启用；测试只创建并最终删除自己生成的 `test_<guid>` Schema，绝不删除 `public`：
 
 ```powershell
 $env:TCP101_RUN_POSTGRES_TESTS = '1'

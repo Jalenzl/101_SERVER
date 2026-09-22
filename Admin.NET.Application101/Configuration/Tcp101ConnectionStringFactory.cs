@@ -10,9 +10,9 @@ public static class Tcp101ConnectionStringFactory
     {
         ArgumentNullException.ThrowIfNull(options);
 
-        if (!string.Equals(options.Database, "tcp101", StringComparison.Ordinal))
+        if (!string.Equals(options.Database, "tpc101", StringComparison.Ordinal))
         {
-            throw new InvalidOperationException("Tcp101 database name must be tcp101.");
+            throw new InvalidOperationException("Tcp101 database name must be tpc101.");
         }
 
         if (!string.Equals(options.Schema, "public", StringComparison.Ordinal))

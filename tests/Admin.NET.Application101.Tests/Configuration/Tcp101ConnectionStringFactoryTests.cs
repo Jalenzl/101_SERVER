@@ -28,7 +28,7 @@ public class Tcp101ConnectionStringFactoryTests
         Assert.Equal("db", parsed.Host);
         Assert.Equal(5432, parsed.Port);
         Assert.Equal("app", parsed.Username);
-        Assert.Equal("tcp101", parsed.Database);
+        Assert.Equal("tpc101", parsed.Database);
         Assert.Equal("public", parsed.SearchPath);
         Assert.Equal(password, parsed.Password);
     }

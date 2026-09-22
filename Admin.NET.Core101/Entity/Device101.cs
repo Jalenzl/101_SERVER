@@ -12,24 +12,24 @@ public sealed class Device101 : Entity101Base
     [SugarColumn(Length = 128)] public string Manufacturer { get; set; } = string.Empty;
     [SugarColumn(Length = 64)] public string Model { get; set; } = string.Empty;
     [SugarColumn(Length = 128)] public string Range { get; set; } = string.Empty;
-    public DateOnly? EnabledDate { get; set; }
+    [SugarColumn(IsNullable = true)] public DateOnly? EnabledDate { get; set; }
     [SugarColumn(Length = 32)] public string UsageStatus { get; set; } = string.Empty;
     public bool IsMeasuring { get; set; }
-    public DateOnly? CalibrationDate { get; set; }
+    [SugarColumn(IsNullable = true)] public DateOnly? CalibrationDate { get; set; }
     [SugarColumn(Length = 32)] public string CalibrationCycle { get; set; } = string.Empty;
-    public DateOnly? ValidUntil { get; set; }
+    [SugarColumn(IsNullable = true)] public DateOnly? ValidUntil { get; set; }
     [SugarColumn(Length = 32)] public string CalibrationStatus { get; set; } = string.Empty;
     [SugarColumn(Length = 64)] public string CertificateNo { get; set; } = string.Empty;
-    public Guid? CertificateStoredFileId { get; set; }
-    public DateOnly? LastMaintenance { get; set; }
+    [SugarColumn(IsNullable = true)] public Guid? CertificateStoredFileId { get; set; }
+    [SugarColumn(IsNullable = true)] public DateOnly? LastMaintenance { get; set; }
     [SugarColumn(Length = 512)] public string MaintenanceContent { get; set; } = string.Empty;
     [SugarColumn(Length = 32)] public string MaintenanceCycle { get; set; } = string.Empty;
-    public DateOnly? NextMaintenance { get; set; }
-    public Guid? MaintenanceStoredFileId { get; set; }
-    public int? SuggestedUses { get; set; }
+    [SugarColumn(IsNullable = true)] public DateOnly? NextMaintenance { get; set; }
+    [SugarColumn(IsNullable = true)] public Guid? MaintenanceStoredFileId { get; set; }
+    [SugarColumn(IsNullable = true)] public int? SuggestedUses { get; set; }
     public int UsedCount { get; set; }
-    public int? SuggestedYears { get; set; }
-    public Guid? OwnerPersonId { get; set; }
+    [SugarColumn(IsNullable = true)] public int? SuggestedYears { get; set; }
+    [SugarColumn(IsNullable = true)] public Guid? OwnerPersonId { get; set; }
     [SugarColumn(Length = 64)] public string Department { get; set; } = string.Empty;
     [SugarColumn(Length = 64)] public string Area { get; set; } = string.Empty;
     [SugarColumn(Length = 64)] public string Rig { get; set; } = string.Empty;

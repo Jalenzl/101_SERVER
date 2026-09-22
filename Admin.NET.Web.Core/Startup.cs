@@ -34,8 +34,6 @@ public class Startup : AppStartup
             .AddCheck("live", () => HealthCheckResult.Healthy("Healthy"), tags: ["live"])
             .AddCheck<Tcp101DatabaseHealthCheck>("database", tags: ["ready"])
             .AddCheck<Tcp101StorageHealthCheck>("storage", tags: ["ready"]);
-        services.AddSpecificationDocuments();
-
         services.AddControllers()
             .AddAppLocalization()
             .AddNewtonsoftJson(options =>

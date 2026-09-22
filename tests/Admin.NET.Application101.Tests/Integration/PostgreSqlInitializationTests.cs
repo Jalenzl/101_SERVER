@@ -1,6 +1,7 @@
 using Admin.NET.Core;
 using Admin.NET.Core101.Entity;
 using Admin.NET.Core101.Seed;
+using Newtonsoft.Json.Linq;
 using Npgsql;
 using SqlSugar;
 using Xunit;
@@ -24,7 +25,15 @@ public sealed class PostgreSqlInitializationTests
         Assert.False(string.IsNullOrWhiteSpace(password), "TCP101_DB_PASSWORD is required when PostgreSQL tests are enabled.");
 
         var schema = "test_" + Guid.NewGuid().ToString("N");
-        var adminConnection = $"Host=localhost;Port=5432;Username=postgres;Password={password};Database=tcp101";
+        var portValue = Environment.GetEnvironmentVariable("TCP101_TEST_DB_PORT");
+        var adminConnection = new NpgsqlConnectionStringBuilder
+        {
+            Host = Environment.GetEnvironmentVariable("TCP101_TEST_DB_HOST") ?? "localhost",
+            Port = int.TryParse(portValue, out var port) ? port : 5432,
+            Username = Environment.GetEnvironmentVariable("TCP101_TEST_DB_USERNAME") ?? "postgres",
+            Password = password,
+            Database = "tpc101",
+        }.ConnectionString;
         await using var connection = new NpgsqlConnection(adminConnection);
         await connection.OpenAsync();
         try
@@ -34,12 +43,14 @@ public sealed class PostgreSqlInitializationTests
             {
                 ConfigId = SqlSugarConst.MainConfigId,
                 DbType = DbType.PostgreSQL,
-                ConnectionString = adminConnection + $";Search Path={schema}",
+                ConnectionString = new NpgsqlConnectionStringBuilder(adminConnection) { SearchPath = schema }.ConnectionString,
                 IsAutoCloseConnection = true,
                 DbSettings = new DbSettings { EnableUnderLine = true },
                 TableSettings = new TableSettings(), SeedSettings = new SeedSettings()
             };
             SqlSugarSetup.SetDbConfig(config);
+            config.ConfigureExternalServices.DataInfoCacheService = null;
+            config.MoreSettings.IsAutoRemoveDataCache = false;
             using var database = new SqlSugarClient(config);
             database.CodeFirst.InitTables(EntityTypes);
 
@@ -62,15 +73,20 @@ public sealed class PostgreSqlInitializationTests
             var transfer = new TaskTransferRecord101
             {
                 TaskId = SeedIds101.TaskGg1101, TableId = "upper-thrust", OrderNo = 99,
-                DataJson = """{"parameter":"jsonb-check","unit":"N"}"""
+                DataJson = JObject.Parse("""{"parameter":"jsonb-check","unit":"N"}""")
             };
             await database.Insertable(transfer).ExecuteCommandAsync();
             await using var typeCommand = new NpgsqlCommand(
-                $"SELECT pg_typeof(data_json)::text FROM \"{schema}\".t101_task_transfer_record WHERE id = @id", connection);
+                $"SELECT pg_typeof(data_json)::text, jsonb_typeof(data_json) FROM \"{schema}\".t101_task_transfer_record WHERE id = @id", connection);
             typeCommand.Parameters.AddWithValue("id", transfer.Id);
-            Assert.Equal("jsonb", (string?)await typeCommand.ExecuteScalarAsync());
-            Assert.Equal(transfer.DataJson, (await database.Queryable<TaskTransferRecord101>()
-                .FirstAsync(item => item.Id == transfer.Id)).DataJson);
+            await using var typeReader = await typeCommand.ExecuteReaderAsync();
+            Assert.True(await typeReader.ReadAsync());
+            Assert.Equal("jsonb", typeReader.GetString(0));
+            Assert.Equal("object", typeReader.GetString(1));
+            await typeReader.CloseAsync();
+            var storedTransfer = await database.Queryable<TaskTransferRecord101>()
+                .FirstAsync(item => item.Id == transfer.Id);
+            Assert.True(JToken.DeepEquals(transfer.DataJson, storedTransfer.DataJson));
 
             var duplicate = new Device101 { Code = MasterDataSeed101.Devices[0].Code, Name = "重复编号" };
             await Assert.ThrowsAnyAsync<Exception>(() => database.Insertable(duplicate).ExecuteCommandAsync());

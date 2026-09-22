@@ -8,7 +8,7 @@ public sealed class Document101 : Entity101Base
     [SugarColumn(Length = 256)] public string Name { get; set; } = string.Empty;
     [SugarColumn(Length = 64)] public string Type { get; set; } = string.Empty;
     [SugarColumn(Length = 64)] public string Department { get; set; } = string.Empty;
-    public Guid? AuthorPersonId { get; set; }
-    public DateOnly? PublishedAt { get; set; }
-    public Guid? CurrentStoredFileId { get; set; }
+    [SugarColumn(IsNullable = true)] public Guid? AuthorPersonId { get; set; }
+    [SugarColumn(IsNullable = true)] public DateOnly? PublishedAt { get; set; }
+    [SugarColumn(IsNullable = true)] public Guid? CurrentStoredFileId { get; set; }
 }

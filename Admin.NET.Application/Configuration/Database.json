@@ -1,10 +1,10 @@
 {
   "Tcp101": {
     "Database": {
-      "Host": "localhost",
-      "Port": 5432,
-      "Username": "postgres",
-      "Database": "tcp101",
+      "Host": "222.92.178.198",
+      "Port": 30001,
+      "Username": "shushe",
+      "Database": "tpc101",
       "Schema": "public"
     },
     "FileStorage": {
