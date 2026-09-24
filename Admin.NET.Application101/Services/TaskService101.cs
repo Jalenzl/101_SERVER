@@ -43,6 +43,8 @@ public sealed class TaskService101(SqlSugarRepository<Task101> repository) : ITr
 
     public async Task<Guid> CreateAsync(CreateTaskInput input)
     {
+        try { TaskWriteGuard.EnsureInitialStatus(input.Status); }
+        catch (InvalidOperationException error) { throw Oops.Oh(error.Message).StatusCode(400); }
         var item = Map(input, new Task101());
         await repository.InsertAsync(item);
         return item.Id;
@@ -52,6 +54,8 @@ public sealed class TaskService101(SqlSugarRepository<Task101> repository) : ITr
     {
         var item = await FindAsync(id);
         EnsureMutable(item.Status);
+        try { TaskWriteGuard.EnsureMetadataUpdateDoesNotChangeStatus(item.Status, input.Status); }
+        catch (InvalidOperationException error) { throw Oops.Oh(error.Message).StatusCode(400); }
         Map(input, item);
         item.UpdateTime = DateTime.UtcNow;
         await repository.AsUpdateable(item).ExecuteCommandAsync();
@@ -67,6 +71,14 @@ public sealed class TaskService101(SqlSugarRepository<Task101> repository) : ITr
         {
             var operationIds = await database.Queryable<Operation101>()
                 .Where(operation => operation.TaskId == id).Select(operation => operation.Id).ToListAsync();
+            var hasOperationSignatures = operationIds.Count > 0 &&
+                await database.Queryable<OperationSignature101>()
+                    .AnyAsync(row => row.Scope == "operation" && operationIds.Contains(row.ScopeId));
+            var hasPreparationSignatures = await database.Queryable<OperationSignature101>()
+                .AnyAsync(row => row.ScopeId == id &&
+                    (row.Scope.StartsWith("equipment:") || row.Scope.StartsWith("transfer:")));
+            try { TaskWriteGuard.EnsureDeletable(hasOperationSignatures || hasPreparationSignatures); }
+            catch (InvalidOperationException error) { throw Oops.Oh(error.Message).StatusCode(409); }
             if (operationIds.Count > 0)
             {
                 await database.Deleteable<OperationCheck101>().Where(row => operationIds.Contains(row.OperationId)).ExecuteCommandAsync();
@@ -81,6 +93,10 @@ public sealed class TaskService101(SqlSugarRepository<Task101> repository) : ITr
             await database.Deleteable<TaskTransferRecord101>().Where(row => row.TaskId == id).ExecuteCommandAsync();
             await database.Deleteable<TaskDocument101>().Where(row => row.TaskId == id).ExecuteCommandAsync();
             await database.Deleteable<TaskWorkflow101>().Where(row => row.TaskId == id).ExecuteCommandAsync();
+            await database.Deleteable<TaskRecord101>().Where(row => row.TaskId == id).ExecuteCommandAsync();
+            await database.Deleteable<OperationSignature101>()
+                .Where(row => row.Scope.StartsWith("equipment:") || row.Scope.StartsWith("transfer:"))
+                .Where(row => row.ScopeId == id).ExecuteCommandAsync();
             item.IsDelete = true;
             item.UpdateTime = DateTime.UtcNow;
             await database.Updateable(item).UpdateColumns(row => new { row.IsDelete, row.UpdateTime }).ExecuteCommandAsync();
@@ -95,6 +111,7 @@ public sealed class TaskService101(SqlSugarRepository<Task101> repository) : ITr
 
     public async Task SetStatusAsync(Guid id, TaskStatus101 status)
     {
+        if (!Enum.IsDefined(status)) throw Oops.Oh("不支持的任务状态。").StatusCode(400);
         var item = await FindAsync(id);
         EnsureMutable(item.Status);
         if (status == TaskStatus101.Completed)

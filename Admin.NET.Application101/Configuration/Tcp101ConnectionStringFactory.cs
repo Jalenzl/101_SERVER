@@ -23,7 +23,7 @@ public static class Tcp101ConnectionStringFactory
         if (string.IsNullOrWhiteSpace(password))
         {
             throw new InvalidOperationException(
-                $"Environment variable {PasswordEnvironmentVariable} is required.");
+                $"{PasswordEnvironmentVariable} or Tcp101:Database:Password is required.");
         }
 
         return new NpgsqlConnectionStringBuilder

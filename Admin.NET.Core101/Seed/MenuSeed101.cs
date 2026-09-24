@@ -17,7 +17,9 @@ public static class MenuSeed101
         "101:preparation:device", "101:preparation:document", "101:preparation:transfer:read",
         "101:preparation:transfer:update", "101:workflow-selection:read", "101:workflow-selection:update",
         "101:operation:read", "101:operation:update", "101:operation:check", "101:operation:sign",
-        "101:operation:withdraw-signature"
+        "101:operation:withdraw-signature", "101:task-record:read", "101:task-record:update",
+        "101:catalog:read", "101:catalog:write", "101:preparation:signature:read",
+        "101:preparation:signature:sign", "101:preparation:signature:withdraw"
     };
 
     public static IReadOnlyList<SysMenu> Menus { get; } = Build();
@@ -59,13 +61,15 @@ public static class MenuSeed101
     {
         if (permission.StartsWith("101:workflow-selection:", StringComparison.Ordinal) ||
             permission.StartsWith("101:plan:", StringComparison.Ordinal) ||
-            permission.StartsWith("101:preparation:", StringComparison.Ordinal)) return 1501010000061;
+            permission.StartsWith("101:preparation:", StringComparison.Ordinal) ||
+            permission.StartsWith("101:task-record:", StringComparison.Ordinal)) return 1501010000061;
         if (permission.StartsWith("101:operation:", StringComparison.Ordinal)) return 1501010000071;
         if (permission.StartsWith("101:person:", StringComparison.Ordinal)) return 1501010000021;
         if (permission.StartsWith("101:device:", StringComparison.Ordinal)) return 1501010000031;
         if (permission.StartsWith("101:document:", StringComparison.Ordinal) ||
             permission.StartsWith("101:file:", StringComparison.Ordinal)) return 1501010000041;
         if (permission.StartsWith("101:workflow:", StringComparison.Ordinal)) return 1501010000051;
+        if (permission.StartsWith("101:catalog:", StringComparison.Ordinal)) return 1501010000051;
         return 1501010000011;
     }
 }

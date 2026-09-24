@@ -42,6 +42,7 @@ public sealed class EntityMappingTests
         { typeof(TaskTransferRecord101), new[] { nameof(TaskTransferRecord101.TaskId), nameof(TaskTransferRecord101.TableId), nameof(TaskTransferRecord101.OrderNo) } },
         { typeof(OperationCheck101), new[] { nameof(OperationCheck101.OperationId), nameof(OperationCheck101.OrderNo) } },
         { typeof(OperationSignature101), new[] { nameof(OperationSignature101.Scope), nameof(OperationSignature101.ScopeId), nameof(OperationSignature101.Role) } },
+        { typeof(OperationSignature101), new[] { nameof(OperationSignature101.Scope), nameof(OperationSignature101.ScopeId), nameof(OperationSignature101.SignerUserId) } },
     };
 
     [Theory]
@@ -81,6 +82,10 @@ public sealed class EntityMappingTests
         { typeof(Document101), nameof(Document101.CurrentStoredFileId) },
         { typeof(Operation101), nameof(Operation101.OperationDate) },
         { typeof(TaskPlan101), nameof(TaskPlan101.CompletedDate) },
+        { typeof(WorkflowNode101), nameof(WorkflowNode101.CheckPost) },
+        { typeof(WorkflowNode101), nameof(WorkflowNode101.Countersign) },
+        { typeof(WorkflowNode101), nameof(WorkflowNode101.Confirmer) },
+        { typeof(WorkflowNode101), nameof(WorkflowNode101.Remark) },
     };
 
     [Theory]

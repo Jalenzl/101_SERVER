@@ -20,4 +20,25 @@ public sealed class TaskWriteGuardTests
             () => TaskWriteGuard.EnsureMutable(TaskStatus101.Completed));
         Assert.Equal("任务已完成，不允许修改。", error.Message);
     }
+
+    [Fact]
+    public void EnsureInitialStatus_RejectsCompletedTask()
+    {
+        Assert.Throws<InvalidOperationException>(() => TaskWriteGuard.EnsureInitialStatus(TaskStatus101.Completed));
+    }
+
+    [Fact]
+    public void EnsureMetadataUpdateDoesNotChangeStatus_RejectsChange()
+    {
+        Assert.Throws<InvalidOperationException>(() =>
+            TaskWriteGuard.EnsureMetadataUpdateDoesNotChangeStatus(
+                TaskStatus101.InProgress, TaskStatus101.Completed));
+    }
+
+    [Fact]
+    public void EnsureDeletable_RejectsSignedTask()
+    {
+        Assert.Throws<InvalidOperationException>(() => TaskWriteGuard.EnsureDeletable(true));
+        TaskWriteGuard.EnsureDeletable(false);
+    }
 }

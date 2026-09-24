@@ -21,7 +21,9 @@ public sealed class PermissionSeedTests
         "101:preparation:device", "101:preparation:document", "101:preparation:transfer:read",
         "101:preparation:transfer:update", "101:workflow-selection:read", "101:workflow-selection:update",
         "101:operation:read", "101:operation:update", "101:operation:check", "101:operation:sign",
-        "101:operation:withdraw-signature"
+        "101:operation:withdraw-signature", "101:task-record:read", "101:task-record:update",
+        "101:catalog:read", "101:catalog:write", "101:preparation:signature:read",
+        "101:preparation:signature:sign", "101:preparation:signature:withdraw"
     };
 
     [Fact]

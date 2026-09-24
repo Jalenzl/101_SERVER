@@ -9,4 +9,7 @@
     <ProjectReference Include="..\Admin.NET.Core\Admin.NET.Core.csproj" />
     <ProjectReference Include="..\Admin.NET.Core101\Admin.NET.Core101.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Seed/catalog-seeds.json" />
+  </ItemGroup>
 </Project>

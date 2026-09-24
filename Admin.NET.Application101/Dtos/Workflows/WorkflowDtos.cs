@@ -15,6 +15,10 @@ public sealed class WorkflowDto
     public string Process { get; set; } = string.Empty;
     public string Step { get; set; } = string.Empty;
     public string Post { get; set; } = string.Empty;
+    public string CheckPost { get; set; } = string.Empty;
+    public string Countersign { get; set; } = string.Empty;
+    public string Confirmer { get; set; } = string.Empty;
+    public string Remark { get; set; } = string.Empty;
     public int Order { get; set; }
     public bool Enabled { get; set; }
 }
@@ -26,6 +30,10 @@ public class CreateWorkflowInput
     [Required, RegularExpression(@".*\S.*")] public string Process { get; set; } = string.Empty;
     [Required, RegularExpression(@".*\S.*")] public string Step { get; set; } = string.Empty;
     public string Post { get; set; } = string.Empty;
+    public string CheckPost { get; set; } = string.Empty;
+    public string Countersign { get; set; } = string.Empty;
+    public string Confirmer { get; set; } = string.Empty;
+    public string Remark { get; set; } = string.Empty;
     [Range(0, int.MaxValue)] public int Order { get; set; }
     public bool Enabled { get; set; } = true;
 }

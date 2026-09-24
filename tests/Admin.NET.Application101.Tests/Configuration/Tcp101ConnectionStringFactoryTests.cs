@@ -13,7 +13,7 @@ public class Tcp101ConnectionStringFactoryTests
         var error = Assert.Throws<InvalidOperationException>(
             () => Tcp101ConnectionStringFactory.Create(options, null));
 
-        Assert.Equal("Environment variable TCP101_DB_PASSWORD is required.", error.Message);
+        Assert.Equal("TCP101_DB_PASSWORD or Tcp101:Database:Password is required.", error.Message);
     }
 
     [Fact]

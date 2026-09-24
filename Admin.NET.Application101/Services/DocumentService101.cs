@@ -21,9 +21,9 @@ public sealed class DocumentService101(
                 new JoinQueryInfos(JoinType.Left, document.AuthorPersonId == author.Id))
             .WhereIF(!string.IsNullOrWhiteSpace(keyword), (document, author) =>
                 document.Code.Contains(keyword!) || document.Name.Contains(keyword!) || author.Name.Contains(keyword!))
-            .WhereIF(!string.IsNullOrWhiteSpace(input.Type), (document, _) => document.Type == input.Type)
-            .WhereIF(!string.IsNullOrWhiteSpace(input.Department), (document, _) => document.Department == input.Department)
-            .OrderByDescending((document, _) => document.PublishedAt);
+            .WhereIF(!string.IsNullOrWhiteSpace(input.Type), (document, author) => document.Type == input.Type)
+            .WhereIF(!string.IsNullOrWhiteSpace(input.Department), (document, author) => document.Department == input.Department)
+            .OrderByDescending((document, author) => document.PublishedAt);
         RefAsync<int> total = 0;
         var items = await query.Select((document, author) => new DocumentDto
         {
@@ -38,7 +38,7 @@ public sealed class DocumentService101(
     {
         var item = await repository.Context.Queryable<Document101, Person101>((document, author) =>
                 new JoinQueryInfos(JoinType.Left, document.AuthorPersonId == author.Id))
-            .Where((document, _) => document.Id == id)
+            .Where((document, author) => document.Id == id)
             .Select((document, author) => new DocumentDto
             {
                 Id = document.Id, Code = document.Code, Name = document.Name, Type = document.Type,
@@ -122,8 +122,8 @@ public sealed class DocumentService101(
         var file = await storedFiles.GetAsync(fileId, cancellationToken) ?? throw NotFound();
         if (await storedFiles.IsReferencedAsync(fileId, cancellationToken))
             throw Oops.Oh("文件正在使用，不能删除。").StatusCode(409);
-        await storage.DeleteIfExistsAsync(file.RelativePath, cancellationToken);
         await storedFiles.MarkDeletedAsync(file, cancellationToken);
+        await storage.DeleteIfExistsAsync(file.RelativePath, cancellationToken);
     }
 
     private async Task<Document101> FindAsync(Guid id) =>

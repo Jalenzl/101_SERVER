@@ -11,10 +11,12 @@ public sealed class LocalFileStorage101 : IFileStorage101, ITransient
     private readonly string root;
 
     [ActivatorUtilitiesConstructor]
-    public LocalFileStorage101(IOptions<Tcp101FileStorageOptions> options)
-        : this(Environment.GetEnvironmentVariable(Tcp101StorageHealthCheck.PathEnvironmentVariable)
+    public LocalFileStorage101(IOptions<Tcp101FileStorageOptions> options, IConfiguration configuration)
+        : this(Tcp101SecretProvider.Resolve(configuration,
+                Tcp101StorageHealthCheck.PathEnvironmentVariable,
+                $"{Tcp101FileStorageOptions.SectionName}:RootPath")
             ?? options.Value.RootPath
-            ?? throw new InvalidOperationException("TCP101_FILE_STORAGE_PATH is required."))
+            ?? throw new InvalidOperationException("TCP101_FILE_STORAGE_PATH or Tcp101:FileStorage:RootPath is required."))
     {
     }
 

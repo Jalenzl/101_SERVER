@@ -1,4 +1,3 @@
-using System.Text.Json;
 using Admin.NET.Application101.Dtos.Preparation;
 using Admin.NET.Application101.Validation;
 using Admin.NET.Core101.Domain;
@@ -116,8 +115,7 @@ public sealed class TaskPreparationService101(SqlSugarRepository<Task101> tasks)
             throw Oops.Oh("不支持的传递表。").StatusCode(400);
         var rows = await tasks.Context.Queryable<TaskTransferRecord101>()
             .Where(item => item.TaskId == taskId && item.TableId == tableId).OrderBy(item => item.OrderNo).ToListAsync();
-        return rows.Select(item => new TransferRowDto(item.Id, item.OrderNo,
-            JsonDocument.Parse(item.DataJson.ToString(Newtonsoft.Json.Formatting.None)).RootElement.Clone())).ToArray();
+        return rows.Select(item => new TransferRowDto(item.Id, item.OrderNo, item.DataJson)).ToArray();
     }
 
     public async Task SaveTransfersAsync(Guid taskId, string tableId, SaveTransferInput input)
@@ -135,7 +133,7 @@ public sealed class TaskPreparationService101(SqlSugarRepository<Task101> tasks)
             var rows = input.Rows.OrderBy(item => item.Order).Select(item => new TaskTransferRecord101
             {
                 Id = item.Id, TaskId = taskId, TableId = tableId,
-                DataJson = JObject.Parse(item.Data.GetRawText()), OrderNo = item.Order
+                DataJson = (JObject)item.Data.DeepClone(), OrderNo = item.Order
             }).ToList();
             if (rows.Count > 0) await database.Insertable(rows).ExecuteCommandAsync();
             await database.Ado.CommitTranAsync();

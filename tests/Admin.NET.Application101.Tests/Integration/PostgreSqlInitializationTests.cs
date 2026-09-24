@@ -15,7 +15,7 @@ public sealed class PostgreSqlInitializationTests
         typeof(Task101), typeof(Person101), typeof(Device101), typeof(Document101), typeof(StoredFile101),
         typeof(TaskPlan101), typeof(TaskPerson101), typeof(TaskDevice101), typeof(TaskTransferRecord101),
         typeof(TaskDocument101), typeof(WorkflowNode101), typeof(TaskWorkflow101), typeof(Operation101),
-        typeof(OperationCheck101), typeof(OperationSignature101)
+        typeof(OperationCheck101), typeof(OperationSignature101), typeof(TaskRecord101), typeof(CatalogRecord101)
     };
 
     [PostgreSqlFact]
@@ -67,7 +67,7 @@ public sealed class PostgreSqlInitializationTests
             var indexes = await UniqueIndexesAsync(connection, schema);
             var expectedIndexes = new[] { "ux_t101_device_code", "ux_t101_document_code", "ux_t101_task_person",
                 "ux_t101_task_device", "ux_t101_task_document", "ux_t101_task_workflow", "ux_t101_task_transfer",
-                "ux_t101_operation_check", "ux_t101_operation_signature" };
+                "ux_t101_operation_check", "ux_t101_operation_signature", "ux_t101_operation_signature_signer" };
             Assert.All(expectedIndexes, name => Assert.Contains(name, indexes));
 
             var transfer = new TaskTransferRecord101

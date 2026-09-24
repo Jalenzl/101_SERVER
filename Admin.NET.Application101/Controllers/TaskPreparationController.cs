@@ -29,7 +29,7 @@ public sealed class TaskPreparationController(TaskPreparationService101 service)
     public Task<IReadOnlyList<TransferRowDto>> GetTransfers(Guid taskId, string tableId) =>
         service.GetTransfersAsync(taskId, tableId);
 
-    [HttpPut("transfers/{tableId}"), ApiPermission("101:preparation:transfer:update")]
+    [HttpPut("transfers/{tableId}"), RequestSizeLimit(16 * 1024 * 1024), ApiPermission("101:preparation:transfer:update")]
     public Task SaveTransfers(Guid taskId, string tableId, SaveTransferInput input) =>
         service.SaveTransfersAsync(taskId, tableId, input);
 }

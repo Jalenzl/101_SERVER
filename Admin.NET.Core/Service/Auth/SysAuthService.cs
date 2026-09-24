@@ -45,7 +45,7 @@ public class SysAuthService : IDynamicApiController, ITransient
     /// 账号密码登录
     /// </summary>
     /// <param name="input"></param>
-    /// <remarks>用户名/密码：superadmin/123456</remarks>
+    /// <remarks>初始密码由 TCP101_INITIAL_ADMIN_PASSWORD 环境变量或开发机 User Secrets 设置。</remarks>
     /// <returns></returns>
     [AllowAnonymous]
     [DisplayName("账号密码登录")]
@@ -119,7 +119,7 @@ public class SysAuthService : IDynamicApiController, ITransient
     /// 修改密码
     /// </summary>
     /// <param name="input"></param>
-    /// <remarks>用户名/密码：superadmin/123456</remarks>
+    /// <remarks>初始密码由 TCP101_INITIAL_ADMIN_PASSWORD 环境变量或开发机 User Secrets 设置。</remarks>
     /// <returns></returns>
     [AllowAnonymous]
     [DisplayName("修改密码")]
@@ -229,7 +229,7 @@ public class SysAuthService : IDynamicApiController, ITransient
     /// IC 卡登录
     /// </summary>
     /// <param name="input"></param>
-    /// <remarks>用户名/密码：superadmin/123456</remarks>
+    /// <remarks>此接口使用 IC 卡号登录，不使用账号密码。</remarks>
     /// <returns></returns>
     [AllowAnonymous]
     [DisplayName("IC卡登录")]

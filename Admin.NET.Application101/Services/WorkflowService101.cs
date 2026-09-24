@@ -18,7 +18,10 @@ public sealed class WorkflowService101(SqlSugarRepository<WorkflowNode101> repos
         var items = await query.Select(item => new WorkflowDto
         {
             Id = item.Id, Department = item.Department, Area = item.Area, Process = item.Process,
-            Step = item.Step, Post = item.Post, Order = item.OrderNo, Enabled = item.Enabled
+            Step = item.Step, Post = item.Post, CheckPost = item.CheckPost ?? string.Empty,
+            Countersign = item.Countersign ?? string.Empty, Confirmer = item.Confirmer ?? string.Empty,
+            Remark = item.Remark ?? string.Empty,
+            Order = item.OrderNo, Enabled = item.Enabled
         }).ToPageListAsync(input.Page, input.PageSize, total);
         return new PageResult<WorkflowDto> { Items = items, Page = input.Page, PageSize = input.PageSize, Total = total };
     }
@@ -70,7 +73,12 @@ public sealed class WorkflowService101(SqlSugarRepository<WorkflowNode101> repos
     private static WorkflowNode101 Map(CreateWorkflowInput input, WorkflowNode101 item)
     {
         item.Department = input.Department.Trim(); item.Area = input.Area.Trim(); item.Process = input.Process.Trim();
-        item.Step = input.Step.Trim(); item.Post = input.Post.Trim(); item.OrderNo = input.Order; item.Enabled = input.Enabled;
+        item.Step = input.Step.Trim(); item.Post = input.Post.Trim();
+        item.CheckPost = input.CheckPost?.Trim() ?? string.Empty;
+        item.Countersign = input.Countersign?.Trim() ?? string.Empty;
+        item.Confirmer = input.Confirmer?.Trim() ?? string.Empty;
+        item.Remark = input.Remark?.Trim() ?? string.Empty;
+        item.OrderNo = input.Order; item.Enabled = input.Enabled;
         return item;
     }
 

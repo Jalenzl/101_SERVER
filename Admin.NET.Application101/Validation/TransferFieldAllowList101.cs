@@ -1,4 +1,4 @@
-using System.Text.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Admin.NET.Application101.Validation;
 
@@ -21,14 +21,14 @@ public static class TransferFieldAllowList101
         "collector1Filter", "collector2Channel", "collector2Range", "collector2Filter"
     };
 
-    public static void Validate(string tableId, JsonElement data)
+    public static void Validate(string tableId, JObject data)
     {
         if (!TableIds.Contains(tableId)) throw Oops.Oh("不支持的传递表。").StatusCode(400);
-        if (data.ValueKind != JsonValueKind.Object) throw Oops.Oh("传递表行必须是 JSON 对象。").StatusCode(400);
-        foreach (var property in data.EnumerateObject())
+        if (data is null) throw Oops.Oh("传递表行必须是 JSON 对象。").StatusCode(400);
+        foreach (var property in data.Properties())
         {
             if (!Fields.Contains(property.Name)) throw Oops.Oh("传递表包含未知字段。").StatusCode(400);
-            if (property.Value.ValueKind is JsonValueKind.Object or JsonValueKind.Array)
+            if (property.Value.Type is JTokenType.Object or JTokenType.Array)
                 throw Oops.Oh("传递表字段只允许标量值。").StatusCode(400);
         }
     }

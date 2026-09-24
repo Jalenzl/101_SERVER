@@ -77,6 +77,9 @@ public sealed class OperationService101(
         if (await database.Queryable<OperationSignature101>().AnyAsync(item =>
                 item.Scope == "operation" && item.ScopeId == operationId && item.Role == input.Role))
             throw Oops.Oh("该角色已签名。").StatusCode(409);
+        if (await database.Queryable<OperationSignature101>().AnyAsync(item =>
+                item.Scope == "operation" && item.ScopeId == operationId && item.SignerUserId == currentUser.UserId))
+            throw Oops.Oh("当前账号已在此位置签名。").StatusCode(409);
         var signature = new OperationSignature101
         {
             Scope = "operation", ScopeId = operationId, Role = input.Role,
@@ -88,7 +91,7 @@ public sealed class OperationService101(
         }
         catch (PostgresException error) when (error.SqlState == PostgresErrorCodes.UniqueViolation)
         {
-            throw Oops.Oh("该角色已签名。").StatusCode(409);
+            throw Oops.Oh("该角色或账号已在此位置签名。").StatusCode(409);
         }
         return new OperationSignatureDto(signature.Id, signature.Role, signature.SignerUserId,
             signature.SignerName, signature.SignedAt);

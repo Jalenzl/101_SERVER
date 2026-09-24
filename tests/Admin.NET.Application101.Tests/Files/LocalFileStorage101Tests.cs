@@ -1,5 +1,10 @@
 using Admin.NET.Application101.Services;
 using Admin.NET.Application101.Validation;
+using Admin.NET.Application101.Configuration;
+using Admin.NET.Application101.Health;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Microsoft.Extensions.Options;
 using Xunit;
 
 namespace Admin.NET.Application101.Tests.Files;
@@ -45,6 +50,26 @@ public sealed class LocalFileStorage101Tests : IDisposable
         var storage = new LocalFileStorage101(root);
         await Assert.ThrowsAsync<InvalidDataException>(() => storage.SaveAsync(
             "large.pdf", "application/pdf", new OversizedStream(), CancellationToken.None));
+    }
+
+    [Fact]
+    public async Task StorageAndHealthCheck_UseConfiguredRootPath()
+    {
+        var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string?>
+            {
+                ["Tcp101:FileStorage:RootPath"] = root
+            })
+            .Build();
+        var options = Options.Create(new Tcp101FileStorageOptions());
+        var storage = new LocalFileStorage101(options, configuration);
+        await using var content = new MemoryStream("safe"u8.ToArray());
+        var saved = await storage.SaveAsync("test.pdf", "application/pdf", content, CancellationToken.None);
+
+        Assert.True(File.Exists(Path.Combine(root, saved.RelativePath)));
+        var health = new Tcp101StorageHealthCheck(options, configuration);
+        var result = await health.CheckHealthAsync(new HealthCheckContext());
+        Assert.Equal(HealthStatus.Healthy, result.Status);
     }
 
     public void Dispose()

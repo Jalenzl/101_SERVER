@@ -1,4 +1,4 @@
-using System.Text.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Admin.NET.Application101.Dtos.Preparation;
 
@@ -27,6 +27,6 @@ public sealed record TaskDocumentDto(Guid Id, Guid DocumentId, string DocumentTy
 public sealed record TaskPreparationDto(IReadOnlyList<TaskPersonnelDto> Personnel,
     IReadOnlyList<TaskDeviceDto> Devices, IReadOnlyList<TaskDocumentDto> Documents);
 
-public sealed record TransferRowInput(Guid Id, int Order, JsonElement Data);
+public sealed record TransferRowInput(Guid Id, int Order, JObject Data);
 public sealed record SaveTransferInput(IReadOnlyList<TransferRowInput> Rows);
-public sealed record TransferRowDto(Guid Id, int Order, JsonElement Data);
+public sealed record TransferRowDto(Guid Id, int Order, JObject Data);

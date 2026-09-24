@@ -18,4 +18,21 @@ public class ApiPermissionAttributeTests
 
         Assert.Equal("101:task:update", attribute.Name);
     }
+
+    [Fact]
+    public void MarkedEndpoint_DeniesPermissionMissingFromMenus()
+    {
+        Assert.False(ApiPermissionAuthorization101.IsAllowed(
+            "101:catalog:write", "101:catalog:write", [], []));
+        Assert.False(ApiPermissionAuthorization101.IsAllowed(
+            "101:catalog:write", "101:catalog:write", ["101:catalog:write"], []));
+        Assert.True(ApiPermissionAuthorization101.IsAllowed(
+            "101:catalog:write", "101:catalog:write", ["101:catalog:write"], ["101:catalog:write"]));
+    }
+
+    [Fact]
+    public void LegacyEndpoint_KeepsExistingUnknownPermissionBehavior()
+    {
+        Assert.True(ApiPermissionAuthorization101.IsAllowed("sysConfig:list", null, [], []));
+    }
 }

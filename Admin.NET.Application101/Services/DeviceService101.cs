@@ -13,9 +13,9 @@ public sealed class DeviceService101(SqlSugarRepository<Device101> repository) :
             .WhereIF(!string.IsNullOrWhiteSpace(keyword), (device, owner) =>
                 device.Code.Contains(keyword!) || device.Name.Contains(keyword!) || device.FactoryCode.Contains(keyword!) ||
                 device.Model.Contains(keyword!) || device.Rig.Contains(keyword!) || owner.Name.Contains(keyword!))
-            .WhereIF(input.System.HasValue, (device, _) => device.System == input.System)
-            .WhereIF(!string.IsNullOrWhiteSpace(input.Status), (device, _) => device.UsageStatus == input.Status)
-            .OrderBy((device, _) => device.Code);
+            .WhereIF(input.System.HasValue, (device, owner) => device.System == input.System)
+            .WhereIF(!string.IsNullOrWhiteSpace(input.Status), (device, owner) => device.UsageStatus == input.Status)
+            .OrderBy((device, owner) => device.Code);
         RefAsync<int> total = 0;
         var items = await query.Select((device, owner) => new DeviceDto
         {
@@ -41,7 +41,7 @@ public sealed class DeviceService101(SqlSugarRepository<Device101> repository) :
     {
         var item = await repository.Context.Queryable<Device101, Person101>((device, owner) =>
                 new JoinQueryInfos(JoinType.Left, device.OwnerPersonId == owner.Id))
-            .Where((device, _) => device.Id == id)
+            .Where((device, owner) => device.Id == id)
             .Select((device, owner) => new DeviceDto
             {
                 Id = device.Id, Code = device.Code, Name = device.Name, FactoryCode = device.FactoryCode,

@@ -1,0 +1,2212 @@
+{
+  "training": [
+    {
+      "subject": "测试1",
+      "name": "测试",
+      "type": "必修",
+      "remark": "",
+      "status": "已学习",
+      "material": ""
+    },
+    {
+      "subject": "测试2",
+      "name": "测试2",
+      "type": "选修",
+      "remark": "",
+      "status": "学习中",
+      "material": ""
+    },
+    {
+      "subject": "测试3",
+      "name": "测试3",
+      "type": "必修",
+      "remark": "",
+      "status": "未学习",
+      "material": ""
+    }
+  ],
+  "workload": [
+    {
+      "name": "王强",
+      "department": "运载试验技术事业部",
+      "months": 8,
+      "days": 168,
+      "equivalent": 1.16,
+      "projects": 3,
+      "reports": 7
+    },
+    {
+      "name": "周航",
+      "department": "运载试验技术事业部",
+      "months": 7,
+      "days": 151,
+      "equivalent": 1.08,
+      "projects": 2,
+      "reports": 5
+    }
+  ],
+  "messages": [
+    {
+      "box": "我发布的",
+      "subject": "HF-22_03试验前综合评审通知",
+      "content": "请各系统负责人于9月27日前完成问题项闭环。",
+      "type": "任务通知",
+      "status": "已发布",
+      "createdAt": "2026-09-16",
+      "publisher": "管理员"
+    },
+    {
+      "box": "我接收的",
+      "subject": "测量设备有效期提醒",
+      "content": "两台压力传感器将在30日内到期。",
+      "type": "风险预警",
+      "status": "未读",
+      "createdAt": "2026-09-17",
+      "publisher": "系统"
+    }
+  ],
+  "riskLibrarySeverity": [
+    {
+      "degree": "轻微",
+      "level": "A",
+      "description": "1.导致试验经费增加；2.基本不影响发动机试验任务目标实现；3.无人员伤害。"
+    },
+    {
+      "degree": "轻度",
+      "level": "B",
+      "description": "1.试验系统或试验发动机极轻微损坏或仅次要功能丧失且可以立即修复；当日内可以继续完成发动机试验任务；2.人员轻微伤害。"
+    }
+  ],
+  "riskLibraryProbability": [
+    {
+      "degree": "极少",
+      "level": "a",
+      "description": "1.理论上属于小概率,实际上还未发生过,或几乎不发生；2.已通过充分的相关试验验证或考核,通过了发动机试验考核；3.有可靠性指标的设备,发生概率p<0.01%。"
+    },
+    {
+      "degree": "很少",
+      "level": "b",
+      "description": "1.可能发生,需要触发条件,或很少发生；2.已经过成熟的理论分析,或者理论分析计算与试验互补,做到了分析不到试验考核到,试验考核不到分析计算到；3.经过发动机试验考核但发生了问题,采取措施后未经充分的相关试验验证,但有成熟的理论分析支撑；4.有可靠性指标的设备,发生概率0.01%≤p<0.1%。"
+    }
+  ],
+  "riskDeviceSeverity": [
+    {
+      "level": "Ⅰ（灾难的）",
+      "description": "1.试验系统或试验发动机严重毁坏或全部功能丧失且无法修复；2.人员死亡或不可恢复的能力丧失。"
+    },
+    {
+      "level": "Ⅱ（严重的）",
+      "description": "1.发动机试验未达到主要试验目的或试验任务失败；2.发动机试验任务严重推迟(1个月以上)；3.试验系统或试验发动机毁坏或主要功能丧失且无法修复；4.人员严重伤害或构成职业病的危害。"
+    },
+    {
+      "level": "Ⅲ（一般的）",
+      "description": "1.发动机试验任务完成但达到的仅为主要试验目的；部分数据虽然未获取,但有可替代相关数据获得。2.试验系统或试验发动机轻度损坏或主要功能丧失且可以修复；当天不能继续完成发动机试验任务；3.人员轻度伤害。"
+    },
+    {
+      "level": "Ⅳ（轻微的）",
+      "description": "1.基本不影响发动机试验任务目标实现；2.试验系统或试验发动机极轻微损坏或仅次要功能丧失且可以立即修复；当日内可以继续完成发动机试验任务;3.人员轻微伤害或未造成伤害。"
+    }
+  ],
+  "riskDeviceProbability": [
+    {
+      "note": "很可能",
+      "level": "A",
+      "description": "1．已经在多个型号及试验系统中发生过、或本型号及试验系统中发生多次,或很可能发生；2．未进行理论分析计算；未能确定最坏影响边界；3．有可靠性指标的设备,发生概率p≥10%。"
+    },
+    {
+      "note": "可能",
+      "level": "B",
+      "description": "1．在本型号及试验系统或其他型号及试验系统发生过,或频繁发生；2．未经发动机试验考核；未经相关试验验证或考核；3．有可靠性指标的设备,发生概率1%≤p＜10%。"
+    },
+    {
+      "note": "少",
+      "level": "C",
+      "description": "1．在本型号及试验系统或其他型号及试验系统偶尔发生过；2．经过了发动机试验考核,但结果处于临界；或者虽然经过了相关试验验证或考核,但不充分；或者虽然进行了理论分析计算,但理论尚不成熟；3．有可靠性指标的设备,发生概率0.1%≤p＜1%。"
+    },
+    {
+      "note": "很少",
+      "level": "D",
+      "description": "1．可能发生,需要触发条件,或很少发生；2．已经过成熟的理论分析,或者理论分析计算与试验互补,做到了分析不到试验考核到,试验考核不到分析计算到；3．经过发动机试验考核但发生了问题,采取措施后未经充分的相关试验验证,但有成熟的理论分析支撑；4．有可靠性指标的设备,发生概率0.01%≤p＜0.1%。"
+    },
+    {
+      "note": "极少",
+      "level": "E",
+      "description": "1．理论上属于小概率,实际上还未发生过,或几乎不发生；2．已通过充分的相关试验验证或考核,通过了发动机试验考核；3．有可靠性指标的设备,发生概率p＜0.01%。"
+    }
+  ],
+  "riskDeviceIndex": [
+    {
+      "probability": "A（很可能）",
+      "catastrophic": 1,
+      "serious": 3,
+      "general": 7,
+      "minor": 13
+    },
+    {
+      "probability": "B（可能）",
+      "catastrophic": 2,
+      "serious": 5,
+      "general": 9,
+      "minor": 16
+    },
+    {
+      "probability": "C（少）",
+      "catastrophic": 4,
+      "serious": 6,
+      "general": 11,
+      "minor": 18
+    },
+    {
+      "probability": "D（很少）",
+      "catastrophic": 8,
+      "serious": 10,
+      "general": 14,
+      "minor": 19
+    },
+    {
+      "probability": "E（极少）",
+      "catastrophic": 12,
+      "serious": 15,
+      "general": 17,
+      "minor": 20
+    }
+  ],
+  "riskDeviceCriteria": [
+    {
+      "index": "1~5",
+      "level": "极高Ⅴ/高风险",
+      "criteria": "不可接受,必须采取措施予以消除会降低,使其达到可接受的程度"
+    },
+    {
+      "index": "6~8",
+      "level": "高Ⅳ/高风险",
+      "criteria": "不可接受,必须采取措施予以消除会降低,使其达到可接受的程度"
+    },
+    {
+      "index": "9~10",
+      "level": "中等Ⅲ/中风险",
+      "criteria": "有条件的接受,并采取针对性的措施,经评审"
+    },
+    {
+      "index": "11~16",
+      "level": "中等Ⅲ/中风险",
+      "criteria": "经评审或审批后可接受"
+    },
+    {
+      "index": "17~18",
+      "level": "低Ⅱ/低风险",
+      "criteria": "可接受"
+    },
+    {
+      "index": "19~20",
+      "level": "极低Ⅰ/低风险",
+      "criteria": "可接受"
+    }
+  ],
+  "riskProcessSeverity": [
+    {
+      "level": "Ⅰ类(灾难的)",
+      "description": "造成发动机报废且经济损失重大的,对发动机功能造成严重故障,对人员有伤害",
+      "score": 4
+    },
+    {
+      "level": "Ⅱ类（严重的）",
+      "description": "造成发动机损伤且无法返工返修",
+      "score": 3
+    },
+    {
+      "level": "Ⅲ类（一般的）",
+      "description": "造成本工序进行困难或影响下一工序的",
+      "score": 2
+    },
+    {
+      "level": "Ⅳ类（轻微的）",
+      "description": "可通过后续措施弥补的",
+      "score": 1
+    }
+  ],
+  "riskProcessOccurrence": [
+    {
+      "level": "A",
+      "note": "故障不可避免会发生",
+      "score": 4
+    },
+    {
+      "level": "B",
+      "note": "故障经常发生",
+      "score": 3
+    },
+    {
+      "level": "C",
+      "note": "故障时有发生",
+      "score": 2
+    },
+    {
+      "level": "D",
+      "note": "故障很少发生",
+      "score": 1
+    }
+  ],
+  "riskProcessDetection": [
+    {
+      "level": "不能检测",
+      "note": "没有已知的检测方法及手段,不能检测检测出故障模式",
+      "score": 4
+    },
+    {
+      "level": "只能间接检测或目测",
+      "note": "现行监测方法测出故障模式比较困难",
+      "score": 3
+    },
+    {
+      "level": "后续过程检测",
+      "note": "可以在后续工序,用现行检测方法,测出故障模式",
+      "score": 2
+    },
+    {
+      "level": "过程直接检测",
+      "note": "可直接检测故障模式",
+      "score": 1
+    }
+  ],
+  "riskLibraryMatrix": [
+    {
+      "severity": "e（很可能）",
+      "a": "Ae",
+      "b": "Be",
+      "c": "Ce",
+      "d": "De",
+      "e": "Ee"
+    },
+    {
+      "severity": "d（可能）",
+      "a": "Ad",
+      "b": "Bd",
+      "c": "Cd",
+      "d": "Dd",
+      "e": "De"
+    },
+    {
+      "severity": "c（少）",
+      "a": "Ac",
+      "b": "Bc",
+      "c": "Cc",
+      "d": "Dc",
+      "e": "Ec"
+    },
+    {
+      "severity": "b（很少）",
+      "a": "Ab",
+      "b": "Bb",
+      "c": "Cb",
+      "d": "Db",
+      "e": "Eb"
+    },
+    {
+      "severity": "a（极少）",
+      "a": "Aa",
+      "b": "Ba",
+      "c": "Ca",
+      "d": "Da",
+      "e": "Ea"
+    }
+  ],
+  "riskLibraryRating": [
+    {
+      "degree": "极低",
+      "level": "Ⅰ",
+      "index": "Aa、Ab、Ac、Ba、Bb、Ca",
+      "control": "可一般跟踪风险",
+      "criteria": "可接受风险",
+      "remark": "低风险"
+    },
+    {
+      "degree": "低",
+      "level": "Ⅱ",
+      "index": "Ad、Bc、Cb",
+      "control": "可一般控制风险,但后果严重性等级为D、E的需提级为“需严格控制风险”",
+      "criteria": "可接受风险",
+      "remark": "低风险"
+    },
+    {
+      "degree": "中等",
+      "level": "Ⅲ",
+      "index": "Db、Dc、Ea、Eb、Ae、Bd、Be、Cc、Cd、Da",
+      "control": "可一般控制风险,但后果严重性等级为D、E的需提级为“需严格控制风险”",
+      "criteria": "不希望有的风险,提交评审",
+      "remark": "中风险"
+    },
+    {
+      "degree": "高",
+      "level": "Ⅳ",
+      "index": "Ce、Dd、Ec",
+      "control": "需严格控制风险",
+      "criteria": "不可接受风险",
+      "remark": "高风险"
+    },
+    {
+      "degree": "极高",
+      "level": "Ⅴ",
+      "index": "De、Ed、Ee",
+      "control": "需严格控制风险",
+      "criteria": "不可接受风险",
+      "remark": "高风险"
+    }
+  ],
+  "departments": [
+    {
+      "name": "101所",
+      "category": "公司",
+      "status": "启用",
+      "remark": ""
+    },
+    {
+      "name": "运载试验技术事业部",
+      "category": "部门",
+      "status": "启用",
+      "remark": ""
+    },
+    {
+      "name": "空间试验技术事业部",
+      "category": "部门",
+      "status": "启用",
+      "remark": ""
+    }
+  ],
+  "areas": [
+    {
+      "name": "姿轨控试验区",
+      "department": "空间试验技术事业部",
+      "status": "启用",
+      "remark": ""
+    },
+    {
+      "name": "涞源试验中心",
+      "department": "运载试验技术事业部",
+      "status": "启用",
+      "remark": ""
+    },
+    {
+      "name": "上面级试验区",
+      "department": "运载试验技术事业部",
+      "status": "启用",
+      "remark": ""
+    },
+    {
+      "name": "大推力一试验区",
+      "department": "运载试验技术事业部",
+      "status": "启用",
+      "remark": ""
+    },
+    {
+      "name": "大推力二试验区",
+      "department": "运载试验技术事业部",
+      "status": "启用",
+      "remark": ""
+    }
+  ],
+  "titles": [
+    {
+      "name": "院长",
+      "status": "启用",
+      "remark": ""
+    },
+    {
+      "name": "总工程师",
+      "status": "启用",
+      "remark": ""
+    },
+    {
+      "name": "副总师",
+      "status": "启用",
+      "remark": ""
+    },
+    {
+      "name": "主任",
+      "status": "启用",
+      "remark": ""
+    },
+    {
+      "name": "试验员",
+      "status": "启用",
+      "remark": ""
+    }
+  ],
+  "posts": [
+    {
+      "department": "运载试验技术事业部",
+      "area": "上面级试验区",
+      "rig": "五号台",
+      "rigCode": "005",
+      "system": "工艺系统",
+      "name": "推进剂供应岗",
+      "code": "GY-01",
+      "status": "启用",
+      "remark": "推进剂供应与置换"
+    },
+    {
+      "department": "运载试验技术事业部",
+      "area": "上面级试验区",
+      "rig": "五号台",
+      "rigCode": "005",
+      "system": "控制系统",
+      "name": "控制操作岗",
+      "code": "KZ-01",
+      "status": "启用",
+      "remark": "时序与联锁操作"
+    }
+  ],
+  "subsystems": [
+    {
+      "name": "真空吊装",
+      "system": "工艺系统",
+      "department": "运载试验技术事业部",
+      "status": "启用",
+      "remark": ""
+    },
+    {
+      "name": "液气路",
+      "system": "工艺系统",
+      "department": "运载试验技术事业部",
+      "status": "启用",
+      "remark": ""
+    },
+    {
+      "name": "循环水",
+      "system": "工艺系统",
+      "department": "运载试验技术事业部",
+      "status": "启用",
+      "remark": ""
+    },
+    {
+      "name": "液氧",
+      "system": "工艺系统",
+      "department": "运载试验技术事业部",
+      "status": "启用",
+      "remark": ""
+    },
+    {
+      "name": "液氢",
+      "system": "工艺系统",
+      "department": "运载试验技术事业部",
+      "status": "启用",
+      "remark": ""
+    },
+    {
+      "name": "试车间",
+      "system": "工艺系统",
+      "department": "运载试验技术事业部",
+      "status": "启用",
+      "remark": ""
+    },
+    {
+      "name": "抽真空",
+      "system": "工艺系统",
+      "department": "运载试验技术事业部",
+      "status": "启用",
+      "remark": ""
+    },
+    {
+      "name": "液甲烷",
+      "system": "工艺系统",
+      "department": "运载试验技术事业部",
+      "status": "启用",
+      "remark": ""
+    },
+    {
+      "name": "配气路",
+      "system": "工艺系统",
+      "department": "运载试验技术事业部",
+      "status": "启用",
+      "remark": ""
+    },
+    {
+      "name": "吊装",
+      "system": "工艺系统",
+      "department": "运载试验技术事业部",
+      "status": "启用",
+      "remark": ""
+    },
+    {
+      "name": "程控",
+      "system": "控制系统",
+      "department": "运载试验技术事业部",
+      "status": "启用",
+      "remark": ""
+    },
+    {
+      "name": "单元",
+      "system": "控制系统",
+      "department": "运载试验技术事业部",
+      "status": "启用",
+      "remark": ""
+    },
+    {
+      "name": "工艺目测",
+      "system": "控制系统",
+      "department": "运载试验技术事业部",
+      "status": "启用",
+      "remark": ""
+    },
+    {
+      "name": "自动增压",
+      "system": "控制系统",
+      "department": "运载试验技术事业部",
+      "status": "启用",
+      "remark": ""
+    },
+    {
+      "name": "程序复记",
+      "system": "控制系统",
+      "department": "运载试验技术事业部",
+      "status": "启用",
+      "remark": ""
+    },
+    {
+      "name": "工艺控制",
+      "system": "控制系统",
+      "department": "运载试验技术事业部",
+      "status": "启用",
+      "remark": ""
+    },
+    {
+      "name": "推力调节",
+      "system": "控制系统",
+      "department": "运载试验技术事业部",
+      "status": "启用",
+      "remark": ""
+    },
+    {
+      "name": "视频监控",
+      "system": "控制系统",
+      "department": "运载试验技术事业部",
+      "status": "启用",
+      "remark": ""
+    },
+    {
+      "name": "电源控制",
+      "system": "控制系统",
+      "department": "运载试验技术事业部",
+      "status": "启用",
+      "remark": ""
+    },
+    {
+      "name": "稳态测量系统/采集装置",
+      "system": "测量系统",
+      "department": "运载试验技术事业部",
+      "status": "启用",
+      "remark": ""
+    },
+    {
+      "name": "紧急关机系统",
+      "system": "测量系统",
+      "department": "运载试验技术事业部",
+      "status": "启用",
+      "remark": ""
+    },
+    {
+      "name": "动态测量系统",
+      "system": "测量系统",
+      "department": "运载试验技术事业部",
+      "status": "启用",
+      "remark": ""
+    },
+    {
+      "name": "压力",
+      "system": "测量系统",
+      "department": "运载试验技术事业部",
+      "status": "启用",
+      "remark": ""
+    },
+    {
+      "name": "温度",
+      "system": "测量系统",
+      "department": "运载试验技术事业部",
+      "status": "启用",
+      "remark": ""
+    },
+    {
+      "name": "流量",
+      "system": "测量系统",
+      "department": "运载试验技术事业部",
+      "status": "启用",
+      "remark": ""
+    },
+    {
+      "name": "推力",
+      "system": "测量系统",
+      "department": "运载试验技术事业部",
+      "status": "启用",
+      "remark": ""
+    },
+    {
+      "name": "振动",
+      "system": "测量系统",
+      "department": "运载试验技术事业部",
+      "status": "启用",
+      "remark": ""
+    },
+    {
+      "name": "高清、高速声像系统",
+      "system": "测量系统",
+      "department": "运载试验技术事业部",
+      "status": "启用",
+      "remark": ""
+    },
+    {
+      "name": "供电系统",
+      "system": "测量系统",
+      "department": "运载试验技术事业部",
+      "status": "启用",
+      "remark": ""
+    },
+    {
+      "name": "遥测系统",
+      "system": "测量系统",
+      "department": "运载试验技术事业部",
+      "status": "启用",
+      "remark": ""
+    },
+    {
+      "name": "工艺视频监控系统",
+      "system": "测量系统",
+      "department": "运载试验技术事业部",
+      "status": "启用",
+      "remark": ""
+    },
+    {
+      "name": "液气路",
+      "system": "工艺系统",
+      "department": "空间试验技术事业部",
+      "status": "启用",
+      "remark": ""
+    },
+    {
+      "name": "循环水",
+      "system": "工艺系统",
+      "department": "空间试验技术事业部",
+      "status": "启用",
+      "remark": ""
+    },
+    {
+      "name": "吊装",
+      "system": "工艺系统",
+      "department": "空间试验技术事业部",
+      "status": "启用",
+      "remark": ""
+    },
+    {
+      "name": "程控",
+      "system": "控制系统",
+      "department": "空间试验技术事业部",
+      "status": "启用",
+      "remark": ""
+    },
+    {
+      "name": "单元",
+      "system": "控制系统",
+      "department": "空间试验技术事业部",
+      "status": "启用",
+      "remark": ""
+    },
+    {
+      "name": "工艺控制",
+      "system": "控制系统",
+      "department": "空间试验技术事业部",
+      "status": "启用",
+      "remark": ""
+    },
+    {
+      "name": "自动增压",
+      "system": "控制系统",
+      "department": "空间试验技术事业部",
+      "status": "启用",
+      "remark": ""
+    },
+    {
+      "name": "时统信号",
+      "system": "控制系统",
+      "department": "空间试验技术事业部",
+      "status": "启用",
+      "remark": ""
+    },
+    {
+      "name": "压力",
+      "system": "测量系统",
+      "department": "空间试验技术事业部",
+      "status": "启用",
+      "remark": ""
+    },
+    {
+      "name": "温度",
+      "system": "测量系统",
+      "department": "空间试验技术事业部",
+      "status": "启用",
+      "remark": ""
+    },
+    {
+      "name": "振动",
+      "system": "测量系统",
+      "department": "空间试验技术事业部",
+      "status": "启用",
+      "remark": ""
+    },
+    {
+      "name": "摄录像",
+      "system": "测量系统",
+      "department": "空间试验技术事业部",
+      "status": "启用",
+      "remark": ""
+    },
+    {
+      "name": "流量",
+      "system": "测量系统",
+      "department": "空间试验技术事业部",
+      "status": "启用",
+      "remark": ""
+    },
+    {
+      "name": "推力",
+      "system": "测量系统",
+      "department": "空间试验技术事业部",
+      "status": "启用",
+      "remark": ""
+    },
+    {
+      "name": "热流",
+      "system": "测量系统",
+      "department": "空间试验技术事业部",
+      "status": "启用",
+      "remark": ""
+    },
+    {
+      "name": "位移",
+      "system": "测量系统",
+      "department": "空间试验技术事业部",
+      "status": "启用",
+      "remark": ""
+    },
+    {
+      "name": "阀电流",
+      "system": "测量系统",
+      "department": "空间试验技术事业部",
+      "status": "启用",
+      "remark": ""
+    }
+  ],
+  "testTypes": [
+    {
+      "name": "地面校准试验",
+      "department": "运载试验技术事业部",
+      "status": "启用",
+      "remark": ""
+    },
+    {
+      "name": "高模校准试验",
+      "department": "运载试验技术事业部",
+      "status": "启用",
+      "remark": ""
+    },
+    {
+      "name": "地面长程试验",
+      "department": "运载试验技术事业部",
+      "status": "启用",
+      "remark": ""
+    },
+    {
+      "name": "高模长程试验",
+      "department": "运载试验技术事业部",
+      "status": "启用",
+      "remark": ""
+    },
+    {
+      "name": "真空点火试验",
+      "department": "运载试验技术事业部",
+      "status": "启用",
+      "remark": ""
+    },
+    {
+      "name": "热真空试验",
+      "department": "运载试验技术事业部",
+      "status": "启用",
+      "remark": ""
+    },
+    {
+      "name": "热标试验",
+      "department": "运载试验技术事业部",
+      "status": "启用",
+      "remark": ""
+    },
+    {
+      "name": "批抽检试验",
+      "department": "运载试验技术事业部",
+      "status": "启用",
+      "remark": ""
+    },
+    {
+      "name": "单机高模试验",
+      "department": "运载试验技术事业部",
+      "status": "启用",
+      "remark": ""
+    },
+    {
+      "name": "单机地面试验",
+      "department": "运载试验技术事业部",
+      "status": "启用",
+      "remark": ""
+    },
+    {
+      "name": "整机高模试验",
+      "department": "运载试验技术事业部",
+      "status": "启用",
+      "remark": ""
+    },
+    {
+      "name": "整机地面试验",
+      "department": "运载试验技术事业部",
+      "status": "启用",
+      "remark": ""
+    },
+    {
+      "name": "可靠性试验",
+      "department": "运载试验技术事业部",
+      "status": "启用",
+      "remark": ""
+    }
+  ],
+  "engines": [
+    {
+      "name": "DN300",
+      "department": "",
+      "type": "",
+      "status": "启用",
+      "manufacturer": "",
+      "origin": "",
+      "remark": ""
+    },
+    {
+      "name": "DN200",
+      "department": "",
+      "type": "",
+      "status": "启用",
+      "manufacturer": "",
+      "origin": "",
+      "remark": ""
+    },
+    {
+      "name": "DN10",
+      "department": "",
+      "type": "",
+      "status": "启用",
+      "manufacturer": "",
+      "origin": "",
+      "remark": ""
+    },
+    {
+      "name": "DN6",
+      "department": "",
+      "type": "",
+      "status": "启用",
+      "manufacturer": "",
+      "origin": "",
+      "remark": ""
+    },
+    {
+      "name": "DN80",
+      "department": "",
+      "type": "",
+      "status": "启用",
+      "manufacturer": "",
+      "origin": "",
+      "remark": ""
+    },
+    {
+      "name": "5MPa",
+      "department": "",
+      "type": "",
+      "status": "启用",
+      "manufacturer": "",
+      "origin": "",
+      "remark": ""
+    },
+    {
+      "name": "10MPa",
+      "department": "",
+      "type": "",
+      "status": "启用",
+      "manufacturer": "",
+      "origin": "",
+      "remark": ""
+    },
+    {
+      "name": "DN65",
+      "department": "",
+      "type": "",
+      "status": "启用",
+      "manufacturer": "",
+      "origin": "",
+      "remark": ""
+    },
+    {
+      "name": "DN50",
+      "department": "",
+      "type": "",
+      "status": "启用",
+      "manufacturer": "",
+      "origin": "",
+      "remark": ""
+    },
+    {
+      "name": "120m3,2.5MPa",
+      "department": "",
+      "type": "",
+      "status": "启用",
+      "manufacturer": "",
+      "origin": "",
+      "remark": ""
+    },
+    {
+      "name": "65m3,1.6MPa",
+      "department": "",
+      "type": "",
+      "status": "启用",
+      "manufacturer": "",
+      "origin": "",
+      "remark": ""
+    },
+    {
+      "name": "DN25,8.12mm",
+      "department": "",
+      "type": "",
+      "status": "启用",
+      "manufacturer": "",
+      "origin": "",
+      "remark": ""
+    },
+    {
+      "name": "DN25,4.58mm",
+      "department": "",
+      "type": "",
+      "status": "启用",
+      "manufacturer": "",
+      "origin": "",
+      "remark": ""
+    },
+    {
+      "name": "180m3,2.5MPa",
+      "department": "",
+      "type": "",
+      "status": "启用",
+      "manufacturer": "",
+      "origin": "",
+      "remark": ""
+    },
+    {
+      "name": "DN250",
+      "department": "",
+      "type": "",
+      "status": "启用",
+      "manufacturer": "",
+      "origin": "",
+      "remark": ""
+    },
+    {
+      "name": "DN25",
+      "department": "",
+      "type": "",
+      "status": "启用",
+      "manufacturer": "",
+      "origin": "",
+      "remark": ""
+    },
+    {
+      "name": "DN10,100度",
+      "department": "",
+      "type": "",
+      "status": "启用",
+      "manufacturer": "",
+      "origin": "",
+      "remark": ""
+    },
+    {
+      "name": "DN500",
+      "department": "",
+      "type": "",
+      "status": "启用",
+      "manufacturer": "",
+      "origin": "",
+      "remark": ""
+    },
+    {
+      "name": "DN400",
+      "department": "",
+      "type": "",
+      "status": "启用",
+      "manufacturer": "",
+      "origin": "",
+      "remark": ""
+    },
+    {
+      "name": "1t",
+      "department": "",
+      "type": "",
+      "status": "启用",
+      "manufacturer": "",
+      "origin": "",
+      "remark": ""
+    },
+    {
+      "name": "2t",
+      "department": "",
+      "type": "",
+      "status": "启用",
+      "manufacturer": "",
+      "origin": "",
+      "remark": ""
+    },
+    {
+      "name": "GG-11",
+      "department": "空间试验技术事业部",
+      "type": "",
+      "status": "启用",
+      "manufacturer": "",
+      "origin": "",
+      "remark": ""
+    },
+    {
+      "name": "VS-66",
+      "department": "空间试验技术事业部",
+      "type": "",
+      "status": "启用",
+      "manufacturer": "",
+      "origin": "",
+      "remark": ""
+    },
+    {
+      "name": "YF-75",
+      "department": "运载试验技术事业部",
+      "type": "",
+      "status": "启用",
+      "manufacturer": "",
+      "origin": "",
+      "remark": ""
+    },
+    {
+      "name": "YF-75D",
+      "department": "运载试验技术事业部",
+      "type": "",
+      "status": "启用",
+      "manufacturer": "",
+      "origin": "",
+      "remark": ""
+    },
+    {
+      "name": "YF-75E",
+      "department": "运载试验技术事业部",
+      "type": "",
+      "status": "启用",
+      "manufacturer": "",
+      "origin": "",
+      "remark": ""
+    },
+    {
+      "name": "YF-75DB",
+      "department": "运载试验技术事业部",
+      "type": "",
+      "status": "启用",
+      "manufacturer": "",
+      "origin": "",
+      "remark": ""
+    },
+    {
+      "name": "YF-75DA",
+      "department": "运载试验技术事业部",
+      "type": "",
+      "status": "启用",
+      "manufacturer": "",
+      "origin": "",
+      "remark": ""
+    }
+  ],
+  "codeMappings": [
+    {
+      "name": "GS-1台",
+      "abbreviation": "G1-",
+      "status": "启用"
+    },
+    {
+      "name": "GS-2台",
+      "abbreviation": "G2-",
+      "status": "启用"
+    },
+    {
+      "name": "GS-3台",
+      "abbreviation": "G3-",
+      "status": "启用"
+    },
+    {
+      "name": "GS-10N台",
+      "abbreviation": "G10N-",
+      "status": "启用"
+    },
+    {
+      "name": "整机台",
+      "abbreviation": "ZJ-",
+      "status": "启用"
+    },
+    {
+      "name": "地面台",
+      "abbreviation": "DM-",
+      "status": "启用"
+    },
+    {
+      "name": "C101台",
+      "abbreviation": "C101-",
+      "status": "启用"
+    },
+    {
+      "name": "C102台",
+      "abbreviation": "C102-",
+      "status": "启用"
+    },
+    {
+      "name": "五号台",
+      "abbreviation": "05-",
+      "status": "启用"
+    },
+    {
+      "name": "六号台",
+      "abbreviation": "06-",
+      "status": "启用"
+    },
+    {
+      "name": "七号台",
+      "abbreviation": "07-",
+      "status": "启用"
+    },
+    {
+      "name": "四号台",
+      "abbreviation": "04-",
+      "status": "启用"
+    },
+    {
+      "name": "动力台",
+      "abbreviation": "DL-",
+      "status": "启用"
+    },
+    {
+      "name": "二号台",
+      "abbreviation": "02-",
+      "status": "启用"
+    },
+    {
+      "name": "三号台Ⅰ工位",
+      "abbreviation": "03Ⅰ-",
+      "status": "启用"
+    },
+    {
+      "name": "三号台Ⅱ工位",
+      "abbreviation": "03Ⅱ-",
+      "status": "启用"
+    },
+    {
+      "name": "工艺系统",
+      "abbreviation": "G",
+      "status": "启用"
+    },
+    {
+      "name": "控制系统",
+      "abbreviation": "K",
+      "status": "启用"
+    },
+    {
+      "name": "测量系统",
+      "abbreviation": "C",
+      "status": "启用"
+    },
+    {
+      "name": "SBB",
+      "abbreviation": "SBB",
+      "status": "启用"
+    }
+  ],
+  "transferMappings": [
+    {
+      "parameter": "",
+      "cableFront": "P1",
+      "cableBack": "P-1",
+      "instrumentChannel": "",
+      "instrumentLine": "",
+      "instrumentGain": "",
+      "daqDevice": "",
+      "daqChannel": "0：0：0",
+      "daqGain": 1,
+      "daqFilter": 300,
+      "daqFormula": "2",
+      "sensorDevice": "",
+      "sensorModel": "",
+      "sensorValidUntil": "",
+      "sensorZero": "",
+      "sensorRange": "",
+      "sensorEquation": "",
+      "sensorSlope": "",
+      "unit": "",
+      "remark": ""
+    },
+    {
+      "parameter": "",
+      "cableFront": "P2",
+      "cableBack": "P-2",
+      "instrumentChannel": "",
+      "instrumentLine": "",
+      "instrumentGain": "",
+      "daqDevice": "",
+      "daqChannel": "0：0：1",
+      "daqGain": 1,
+      "daqFilter": 300,
+      "daqFormula": "2",
+      "sensorDevice": "",
+      "sensorModel": "",
+      "sensorValidUntil": "",
+      "sensorZero": "",
+      "sensorRange": "",
+      "sensorEquation": "",
+      "sensorSlope": "",
+      "unit": "",
+      "remark": ""
+    },
+    {
+      "parameter": "",
+      "cableFront": "P3",
+      "cableBack": "P-3",
+      "instrumentChannel": "",
+      "instrumentLine": "",
+      "instrumentGain": "",
+      "daqDevice": "",
+      "daqChannel": "0：0：2",
+      "daqGain": 1,
+      "daqFilter": 300,
+      "daqFormula": "2",
+      "sensorDevice": "",
+      "sensorModel": "",
+      "sensorValidUntil": "",
+      "sensorZero": "",
+      "sensorRange": "",
+      "sensorEquation": "",
+      "sensorSlope": "",
+      "unit": "",
+      "remark": ""
+    },
+    {
+      "parameter": "",
+      "cableFront": "P4",
+      "cableBack": "P-4",
+      "instrumentChannel": "",
+      "instrumentLine": "",
+      "instrumentGain": "",
+      "daqDevice": "",
+      "daqChannel": "0：0：3",
+      "daqGain": 1,
+      "daqFilter": 300,
+      "daqFormula": "2",
+      "sensorDevice": "",
+      "sensorModel": "",
+      "sensorValidUntil": "",
+      "sensorZero": "",
+      "sensorRange": "",
+      "sensorEquation": "",
+      "sensorSlope": "",
+      "unit": "",
+      "remark": ""
+    },
+    {
+      "parameter": "",
+      "cableFront": "P5",
+      "cableBack": "P-5",
+      "instrumentChannel": "",
+      "instrumentLine": "",
+      "instrumentGain": "",
+      "daqDevice": "",
+      "daqChannel": "0：0：4",
+      "daqGain": 500,
+      "daqFilter": 300,
+      "daqFormula": "2",
+      "sensorDevice": "",
+      "sensorModel": "",
+      "sensorValidUntil": "",
+      "sensorZero": "",
+      "sensorRange": "",
+      "sensorEquation": "",
+      "sensorSlope": "",
+      "unit": "",
+      "remark": ""
+    },
+    {
+      "parameter": "",
+      "cableFront": "P6",
+      "cableBack": "P-6",
+      "instrumentChannel": "",
+      "instrumentLine": "",
+      "instrumentGain": "",
+      "daqDevice": "",
+      "daqChannel": "0：0：5",
+      "daqGain": 500,
+      "daqFilter": 300,
+      "daqFormula": "2",
+      "sensorDevice": "",
+      "sensorModel": "",
+      "sensorValidUntil": "",
+      "sensorZero": "",
+      "sensorRange": "",
+      "sensorEquation": "",
+      "sensorSlope": "",
+      "unit": "",
+      "remark": ""
+    },
+    {
+      "parameter": "",
+      "cableFront": "Tt1",
+      "cableBack": "Tt-1",
+      "instrumentChannel": "",
+      "instrumentLine": "",
+      "instrumentGain": "",
+      "daqDevice": "",
+      "daqChannel": "0：0：6",
+      "daqGain": 1,
+      "daqFilter": 10,
+      "daqFormula": "2",
+      "sensorDevice": "",
+      "sensorModel": "",
+      "sensorValidUntil": "",
+      "sensorZero": "",
+      "sensorRange": "",
+      "sensorEquation": "",
+      "sensorSlope": "",
+      "unit": "",
+      "remark": ""
+    },
+    {
+      "parameter": "",
+      "cableFront": "Tt2",
+      "cableBack": "Tt-2",
+      "instrumentChannel": "",
+      "instrumentLine": "",
+      "instrumentGain": "",
+      "daqDevice": "",
+      "daqChannel": "0：0：7",
+      "daqGain": 1,
+      "daqFilter": 10,
+      "daqFormula": "2",
+      "sensorDevice": "",
+      "sensorModel": "",
+      "sensorValidUntil": "",
+      "sensorZero": "",
+      "sensorRange": "",
+      "sensorEquation": "",
+      "sensorSlope": "",
+      "unit": "",
+      "remark": ""
+    },
+    {
+      "parameter": "",
+      "cableFront": "F1",
+      "cableBack": "F-1",
+      "instrumentChannel": "",
+      "instrumentLine": "",
+      "instrumentGain": "",
+      "daqDevice": "",
+      "daqChannel": "0：1：0",
+      "daqGain": 1,
+      "daqFilter": 300,
+      "daqFormula": "2",
+      "sensorDevice": "",
+      "sensorModel": "",
+      "sensorValidUntil": "",
+      "sensorZero": "",
+      "sensorRange": "",
+      "sensorEquation": "",
+      "sensorSlope": "",
+      "unit": "",
+      "remark": ""
+    },
+    {
+      "parameter": "",
+      "cableFront": "F2",
+      "cableBack": "F-2",
+      "instrumentChannel": "",
+      "instrumentLine": "",
+      "instrumentGain": "",
+      "daqDevice": "",
+      "daqChannel": "0：1：1",
+      "daqGain": 1,
+      "daqFilter": 300,
+      "daqFormula": "2",
+      "sensorDevice": "",
+      "sensorModel": "",
+      "sensorValidUntil": "",
+      "sensorZero": "",
+      "sensorRange": "",
+      "sensorEquation": "",
+      "sensorSlope": "",
+      "unit": "",
+      "remark": ""
+    },
+    {
+      "parameter": "",
+      "cableFront": "F3",
+      "cableBack": "F-3",
+      "instrumentChannel": "",
+      "instrumentLine": "",
+      "instrumentGain": "",
+      "daqDevice": "",
+      "daqChannel": "0：1：2",
+      "daqGain": 1,
+      "daqFilter": 300,
+      "daqFormula": "2",
+      "sensorDevice": "",
+      "sensorModel": "",
+      "sensorValidUntil": "",
+      "sensorZero": "",
+      "sensorRange": "",
+      "sensorEquation": "",
+      "sensorSlope": "",
+      "unit": "",
+      "remark": ""
+    },
+    {
+      "parameter": "",
+      "cableFront": "F4",
+      "cableBack": "F-4",
+      "instrumentChannel": "",
+      "instrumentLine": "",
+      "instrumentGain": "",
+      "daqDevice": "",
+      "daqChannel": "0：1：3",
+      "daqGain": 1,
+      "daqFilter": 300,
+      "daqFormula": "2",
+      "sensorDevice": "",
+      "sensorModel": "",
+      "sensorValidUntil": "",
+      "sensorZero": "",
+      "sensorRange": "",
+      "sensorEquation": "",
+      "sensorSlope": "",
+      "unit": "",
+      "remark": ""
+    },
+    {
+      "parameter": "",
+      "cableFront": "F5",
+      "cableBack": "F-5",
+      "instrumentChannel": "",
+      "instrumentLine": "",
+      "instrumentGain": "",
+      "daqDevice": "",
+      "daqChannel": "0：1：4",
+      "daqGain": 1,
+      "daqFilter": 300,
+      "daqFormula": "2",
+      "sensorDevice": "",
+      "sensorModel": "",
+      "sensorValidUntil": "",
+      "sensorZero": "",
+      "sensorRange": "",
+      "sensorEquation": "",
+      "sensorSlope": "",
+      "unit": "",
+      "remark": ""
+    },
+    {
+      "parameter": "",
+      "cableFront": "F6",
+      "cableBack": "F-6",
+      "instrumentChannel": "",
+      "instrumentLine": "",
+      "instrumentGain": "",
+      "daqDevice": "",
+      "daqChannel": "0：1：5",
+      "daqGain": 1,
+      "daqFilter": 300,
+      "daqFormula": "2",
+      "sensorDevice": "",
+      "sensorModel": "",
+      "sensorValidUntil": "",
+      "sensorZero": "",
+      "sensorRange": "",
+      "sensorEquation": "",
+      "sensorSlope": "",
+      "unit": "",
+      "remark": ""
+    },
+    {
+      "parameter": "",
+      "cableFront": "F7",
+      "cableBack": "F-7",
+      "instrumentChannel": "",
+      "instrumentLine": "",
+      "instrumentGain": "",
+      "daqDevice": "",
+      "daqChannel": "0：1：6",
+      "daqGain": 500,
+      "daqFilter": 300,
+      "daqFormula": "2",
+      "sensorDevice": "",
+      "sensorModel": "",
+      "sensorValidUntil": "",
+      "sensorZero": "",
+      "sensorRange": "",
+      "sensorEquation": "",
+      "sensorSlope": "",
+      "unit": "",
+      "remark": ""
+    },
+    {
+      "parameter": "",
+      "cableFront": "F8",
+      "cableBack": "F-8",
+      "instrumentChannel": "",
+      "instrumentLine": "",
+      "instrumentGain": "",
+      "daqDevice": "",
+      "daqChannel": "0：1：7",
+      "daqGain": 500,
+      "daqFilter": 300,
+      "daqFormula": "2",
+      "sensorDevice": "",
+      "sensorModel": "",
+      "sensorValidUntil": "",
+      "sensorZero": "",
+      "sensorRange": "",
+      "sensorEquation": "",
+      "sensorSlope": "",
+      "unit": "",
+      "remark": ""
+    },
+    {
+      "parameter": "",
+      "cableFront": "T1",
+      "cableBack": "T-1",
+      "instrumentChannel": "",
+      "instrumentLine": "",
+      "instrumentGain": "",
+      "daqDevice": "",
+      "daqChannel": "0：2：0",
+      "daqGain": 200,
+      "daqFilter": 10,
+      "daqFormula": "3-1",
+      "sensorDevice": "",
+      "sensorModel": "",
+      "sensorValidUntil": "",
+      "sensorZero": "",
+      "sensorRange": "",
+      "sensorEquation": "",
+      "sensorSlope": "",
+      "unit": "",
+      "remark": ""
+    },
+    {
+      "parameter": "",
+      "cableFront": "T2",
+      "cableBack": "T-2",
+      "instrumentChannel": "",
+      "instrumentLine": "",
+      "instrumentGain": "",
+      "daqDevice": "",
+      "daqChannel": "0：2：1",
+      "daqGain": 200,
+      "daqFilter": 10,
+      "daqFormula": "3-1",
+      "sensorDevice": "",
+      "sensorModel": "",
+      "sensorValidUntil": "",
+      "sensorZero": "",
+      "sensorRange": "",
+      "sensorEquation": "",
+      "sensorSlope": "",
+      "unit": "",
+      "remark": ""
+    },
+    {
+      "parameter": "",
+      "cableFront": "T3",
+      "cableBack": "T-3",
+      "instrumentChannel": "",
+      "instrumentLine": "",
+      "instrumentGain": "",
+      "daqDevice": "",
+      "daqChannel": "0：2：2",
+      "daqGain": 200,
+      "daqFilter": 10,
+      "daqFormula": "3-1",
+      "sensorDevice": "",
+      "sensorModel": "",
+      "sensorValidUntil": "",
+      "sensorZero": "",
+      "sensorRange": "",
+      "sensorEquation": "",
+      "sensorSlope": "",
+      "unit": "",
+      "remark": ""
+    },
+    {
+      "parameter": "",
+      "cableFront": "T4",
+      "cableBack": "T-4",
+      "instrumentChannel": "",
+      "instrumentLine": "",
+      "instrumentGain": "",
+      "daqDevice": "",
+      "daqChannel": "0：2：3",
+      "daqGain": 200,
+      "daqFilter": 10,
+      "daqFormula": "3-1",
+      "sensorDevice": "",
+      "sensorModel": "",
+      "sensorValidUntil": "",
+      "sensorZero": "",
+      "sensorRange": "",
+      "sensorEquation": "",
+      "sensorSlope": "",
+      "unit": "",
+      "remark": ""
+    },
+    {
+      "parameter": "",
+      "cableFront": "T5",
+      "cableBack": "T-5",
+      "instrumentChannel": "",
+      "instrumentLine": "",
+      "instrumentGain": "",
+      "daqDevice": "",
+      "daqChannel": "0：2：4",
+      "daqGain": 200,
+      "daqFilter": 10,
+      "daqFormula": "3-1",
+      "sensorDevice": "",
+      "sensorModel": "",
+      "sensorValidUntil": "",
+      "sensorZero": "",
+      "sensorRange": "",
+      "sensorEquation": "",
+      "sensorSlope": "",
+      "unit": "",
+      "remark": ""
+    },
+    {
+      "parameter": "",
+      "cableFront": "T6",
+      "cableBack": "T-6",
+      "instrumentChannel": "",
+      "instrumentLine": "",
+      "instrumentGain": "",
+      "daqDevice": "",
+      "daqChannel": "0：2：5",
+      "daqGain": 200,
+      "daqFilter": 10,
+      "daqFormula": "3-1",
+      "sensorDevice": "",
+      "sensorModel": "",
+      "sensorValidUntil": "",
+      "sensorZero": "",
+      "sensorRange": "",
+      "sensorEquation": "",
+      "sensorSlope": "",
+      "unit": "",
+      "remark": ""
+    },
+    {
+      "parameter": "",
+      "cableFront": "T7",
+      "cableBack": "T-7",
+      "instrumentChannel": "",
+      "instrumentLine": "",
+      "instrumentGain": "",
+      "daqDevice": "",
+      "daqChannel": "0：2：6",
+      "daqGain": 200,
+      "daqFilter": 10,
+      "daqFormula": "3-1",
+      "sensorDevice": "",
+      "sensorModel": "",
+      "sensorValidUntil": "",
+      "sensorZero": "",
+      "sensorRange": "",
+      "sensorEquation": "",
+      "sensorSlope": "",
+      "unit": "",
+      "remark": ""
+    },
+    {
+      "parameter": "",
+      "cableFront": "T8",
+      "cableBack": "T-8",
+      "instrumentChannel": "",
+      "instrumentLine": "",
+      "instrumentGain": "",
+      "daqDevice": "",
+      "daqChannel": "0：2：7",
+      "daqGain": 200,
+      "daqFilter": 10,
+      "daqFormula": "3-1",
+      "sensorDevice": "",
+      "sensorModel": "",
+      "sensorValidUntil": "",
+      "sensorZero": "",
+      "sensorRange": "",
+      "sensorEquation": "",
+      "sensorSlope": "",
+      "unit": "",
+      "remark": ""
+    },
+    {
+      "parameter": "",
+      "cableFront": "T9",
+      "cableBack": "T-9",
+      "instrumentChannel": "",
+      "instrumentLine": "",
+      "instrumentGain": "",
+      "daqDevice": "",
+      "daqChannel": "0：3：0",
+      "daqGain": 200,
+      "daqFilter": 10,
+      "daqFormula": "3-2",
+      "sensorDevice": "",
+      "sensorModel": "",
+      "sensorValidUntil": "",
+      "sensorZero": "",
+      "sensorRange": "",
+      "sensorEquation": "",
+      "sensorSlope": "",
+      "unit": "",
+      "remark": ""
+    },
+    {
+      "parameter": "",
+      "cableFront": "T10",
+      "cableBack": "T-10",
+      "instrumentChannel": "",
+      "instrumentLine": "",
+      "instrumentGain": "",
+      "daqDevice": "",
+      "daqChannel": "0：3：1",
+      "daqGain": 200,
+      "daqFilter": 10,
+      "daqFormula": "3-2",
+      "sensorDevice": "",
+      "sensorModel": "",
+      "sensorValidUntil": "",
+      "sensorZero": "",
+      "sensorRange": "",
+      "sensorEquation": "",
+      "sensorSlope": "",
+      "unit": "",
+      "remark": ""
+    },
+    {
+      "parameter": "",
+      "cableFront": "T11",
+      "cableBack": "T-11",
+      "instrumentChannel": "",
+      "instrumentLine": "",
+      "instrumentGain": "",
+      "daqDevice": "",
+      "daqChannel": "0：3：2",
+      "daqGain": 200,
+      "daqFilter": 10,
+      "daqFormula": "3-2",
+      "sensorDevice": "",
+      "sensorModel": "",
+      "sensorValidUntil": "",
+      "sensorZero": "",
+      "sensorRange": "",
+      "sensorEquation": "",
+      "sensorSlope": "",
+      "unit": "",
+      "remark": ""
+    },
+    {
+      "parameter": "",
+      "cableFront": "T12",
+      "cableBack": "T-12",
+      "instrumentChannel": "",
+      "instrumentLine": "",
+      "instrumentGain": "",
+      "daqDevice": "",
+      "daqChannel": "0：3：3",
+      "daqGain": 200,
+      "daqFilter": 10,
+      "daqFormula": "3-2",
+      "sensorDevice": "",
+      "sensorModel": "",
+      "sensorValidUntil": "",
+      "sensorZero": "",
+      "sensorRange": "",
+      "sensorEquation": "",
+      "sensorSlope": "",
+      "unit": "",
+      "remark": ""
+    },
+    {
+      "parameter": "",
+      "cableFront": "T13",
+      "cableBack": "T-13",
+      "instrumentChannel": "",
+      "instrumentLine": "",
+      "instrumentGain": "",
+      "daqDevice": "",
+      "daqChannel": "0：3：4",
+      "daqGain": 200,
+      "daqFilter": 10,
+      "daqFormula": "3-2",
+      "sensorDevice": "",
+      "sensorModel": "",
+      "sensorValidUntil": "",
+      "sensorZero": "",
+      "sensorRange": "",
+      "sensorEquation": "",
+      "sensorSlope": "",
+      "unit": "",
+      "remark": ""
+    },
+    {
+      "parameter": "",
+      "cableFront": "T14",
+      "cableBack": "T-14",
+      "instrumentChannel": "",
+      "instrumentLine": "",
+      "instrumentGain": "",
+      "daqDevice": "",
+      "daqChannel": "0：3：5",
+      "daqGain": 200,
+      "daqFilter": 10,
+      "daqFormula": "3-2",
+      "sensorDevice": "",
+      "sensorModel": "",
+      "sensorValidUntil": "",
+      "sensorZero": "",
+      "sensorRange": "",
+      "sensorEquation": "",
+      "sensorSlope": "",
+      "unit": "",
+      "remark": ""
+    },
+    {
+      "parameter": "",
+      "cableFront": "T15",
+      "cableBack": "T-15",
+      "instrumentChannel": "",
+      "instrumentLine": "",
+      "instrumentGain": "",
+      "daqDevice": "",
+      "daqChannel": "0：3：6",
+      "daqGain": 200,
+      "daqFilter": 10,
+      "daqFormula": "3-2",
+      "sensorDevice": "",
+      "sensorModel": "",
+      "sensorValidUntil": "",
+      "sensorZero": "",
+      "sensorRange": "",
+      "sensorEquation": "",
+      "sensorSlope": "",
+      "unit": "",
+      "remark": ""
+    },
+    {
+      "parameter": "",
+      "cableFront": "T16",
+      "cableBack": "T-16",
+      "instrumentChannel": "",
+      "instrumentLine": "",
+      "instrumentGain": "",
+      "daqDevice": "",
+      "daqChannel": "0：3：7",
+      "daqGain": 200,
+      "daqFilter": 10,
+      "daqFormula": "3-2",
+      "sensorDevice": "",
+      "sensorModel": "",
+      "sensorValidUntil": "",
+      "sensorZero": "",
+      "sensorRange": "",
+      "sensorEquation": "",
+      "sensorSlope": "",
+      "unit": "",
+      "remark": ""
+    },
+    {
+      "parameter": "",
+      "cableFront": "Q1",
+      "cableBack": "Q-1",
+      "instrumentChannel": "",
+      "instrumentLine": "",
+      "instrumentGain": "",
+      "daqDevice": "",
+      "daqChannel": "0：4：0",
+      "daqGain": 1,
+      "daqFilter": 10,
+      "daqFormula": "2",
+      "sensorDevice": "",
+      "sensorModel": "",
+      "sensorValidUntil": "",
+      "sensorZero": "",
+      "sensorRange": "",
+      "sensorEquation": "",
+      "sensorSlope": "",
+      "unit": "",
+      "remark": ""
+    },
+    {
+      "parameter": "",
+      "cableFront": "Q2",
+      "cableBack": "Q-2",
+      "instrumentChannel": "",
+      "instrumentLine": "",
+      "instrumentGain": "",
+      "daqDevice": "",
+      "daqChannel": "0：4：1",
+      "daqGain": 1,
+      "daqFilter": 10,
+      "daqFormula": "2",
+      "sensorDevice": "",
+      "sensorModel": "",
+      "sensorValidUntil": "",
+      "sensorZero": "",
+      "sensorRange": "",
+      "sensorEquation": "",
+      "sensorSlope": "",
+      "unit": "",
+      "remark": ""
+    },
+    {
+      "parameter": "",
+      "cableFront": "Q3",
+      "cableBack": "Q-3",
+      "instrumentChannel": "",
+      "instrumentLine": "",
+      "instrumentGain": "",
+      "daqDevice": "",
+      "daqChannel": "0：4：2",
+      "daqGain": 1,
+      "daqFilter": 10,
+      "daqFormula": "2",
+      "sensorDevice": "",
+      "sensorModel": "",
+      "sensorValidUntil": "",
+      "sensorZero": "",
+      "sensorRange": "",
+      "sensorEquation": "",
+      "sensorSlope": "",
+      "unit": "",
+      "remark": ""
+    },
+    {
+      "parameter": "",
+      "cableFront": "Q4",
+      "cableBack": "Q-4",
+      "instrumentChannel": "",
+      "instrumentLine": "",
+      "instrumentGain": "",
+      "daqDevice": "",
+      "daqChannel": "0：4：3",
+      "daqGain": 1,
+      "daqFilter": 10,
+      "daqFormula": "2",
+      "sensorDevice": "",
+      "sensorModel": "",
+      "sensorValidUntil": "",
+      "sensorZero": "",
+      "sensorRange": "",
+      "sensorEquation": "",
+      "sensorSlope": "",
+      "unit": "",
+      "remark": ""
+    },
+    {
+      "parameter": "",
+      "cableFront": "Q5",
+      "cableBack": "Q-5",
+      "instrumentChannel": "",
+      "instrumentLine": "",
+      "instrumentGain": "",
+      "daqDevice": "",
+      "daqChannel": "0：4：4",
+      "daqGain": 1,
+      "daqFilter": 10,
+      "daqFormula": "2",
+      "sensorDevice": "",
+      "sensorModel": "",
+      "sensorValidUntil": "",
+      "sensorZero": "",
+      "sensorRange": "",
+      "sensorEquation": "",
+      "sensorSlope": "",
+      "unit": "",
+      "remark": ""
+    },
+    {
+      "parameter": "",
+      "cableFront": "Q6",
+      "cableBack": "Q-6",
+      "instrumentChannel": "",
+      "instrumentLine": "",
+      "instrumentGain": "",
+      "daqDevice": "",
+      "daqChannel": "0：4：5",
+      "daqGain": 1,
+      "daqFilter": 10,
+      "daqFormula": "2",
+      "sensorDevice": "",
+      "sensorModel": "",
+      "sensorValidUntil": "",
+      "sensorZero": "",
+      "sensorRange": "",
+      "sensorEquation": "",
+      "sensorSlope": "",
+      "unit": "",
+      "remark": ""
+    },
+    {
+      "parameter": "",
+      "cableFront": "Q7",
+      "cableBack": "Q-7",
+      "instrumentChannel": "",
+      "instrumentLine": "",
+      "instrumentGain": "",
+      "daqDevice": "",
+      "daqChannel": "0：4：6",
+      "daqGain": 1,
+      "daqFilter": 10,
+      "daqFormula": "2",
+      "sensorDevice": "",
+      "sensorModel": "",
+      "sensorValidUntil": "",
+      "sensorZero": "",
+      "sensorRange": "",
+      "sensorEquation": "",
+      "sensorSlope": "",
+      "unit": "",
+      "remark": ""
+    },
+    {
+      "parameter": "",
+      "cableFront": "Q8",
+      "cableBack": "Q-8",
+      "instrumentChannel": "",
+      "instrumentLine": "",
+      "instrumentGain": "",
+      "daqDevice": "",
+      "daqChannel": "0：4：7",
+      "daqGain": 1,
+      "daqFilter": 10,
+      "daqFormula": "2",
+      "sensorDevice": "",
+      "sensorModel": "",
+      "sensorValidUntil": "",
+      "sensorZero": "",
+      "sensorRange": "",
+      "sensorEquation": "",
+      "sensorSlope": "",
+      "unit": "",
+      "remark": ""
+    }
+  ],
+  "enums": [
+    {
+      "name": "工艺系统",
+      "type": "系统",
+      "remark": "启用"
+    },
+    {
+      "name": "控制系统",
+      "type": "系统",
+      "remark": "启用"
+    },
+    {
+      "name": "测量系统",
+      "type": "系统",
+      "remark": "启用"
+    },
+    {
+      "name": "测量系统",
+      "type": "系统",
+      "remark": "启用"
+    },
+    {
+      "name": "1个月",
+      "type": "周期",
+      "remark": "启用"
+    },
+    {
+      "name": "3个月",
+      "type": "周期",
+      "remark": "启用"
+    },
+    {
+      "name": "6个月",
+      "type": "周期",
+      "remark": "启用"
+    },
+    {
+      "name": "12个月",
+      "type": "周期",
+      "remark": "启用"
+    },
+    {
+      "name": "24个月",
+      "type": "周期",
+      "remark": "启用"
+    },
+    {
+      "name": "36个月",
+      "type": "周期",
+      "remark": "启用"
+    },
+    {
+      "name": "在用",
+      "type": "使用状态",
+      "remark": "启用"
+    },
+    {
+      "name": "维修",
+      "type": "使用状态",
+      "remark": "启用"
+    },
+    {
+      "name": "封存",
+      "type": "使用状态",
+      "remark": "启用"
+    },
+    {
+      "name": "否",
+      "type": "计量器具",
+      "remark": "启用"
+    },
+    {
+      "name": "计量器具",
+      "type": "计量器具",
+      "remark": "启用"
+    },
+    {
+      "name": "特种设备",
+      "type": "计量器具",
+      "remark": "启用"
+    },
+    {
+      "name": "准用",
+      "type": "计量状态",
+      "remark": "启用"
+    },
+    {
+      "name": "停用",
+      "type": "计量状态",
+      "remark": "启用"
+    },
+    {
+      "name": "计量中",
+      "type": "计量状态",
+      "remark": "启用"
+    }
+  ]
+}

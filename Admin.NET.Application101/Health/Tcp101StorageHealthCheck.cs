@@ -3,7 +3,8 @@ using Admin.NET.Application101.Configuration;
 namespace Admin.NET.Application101.Health;
 
 public sealed class Tcp101StorageHealthCheck(
-    IOptions<Tcp101FileStorageOptions> options) : IHealthCheck
+    IOptions<Tcp101FileStorageOptions> options,
+    IConfiguration configuration) : IHealthCheck
 {
     public const string PathEnvironmentVariable = "TCP101_FILE_STORAGE_PATH";
 
@@ -11,11 +12,9 @@ public sealed class Tcp101StorageHealthCheck(
         HealthCheckContext context,
         CancellationToken cancellationToken = default)
     {
-        var rootPath = Environment.GetEnvironmentVariable(PathEnvironmentVariable);
-        if (string.IsNullOrWhiteSpace(rootPath))
-        {
-            rootPath = options.Value.RootPath;
-        }
+        var rootPath = Tcp101SecretProvider.Resolve(configuration,
+            PathEnvironmentVariable, $"{Tcp101FileStorageOptions.SectionName}:RootPath")
+            ?? options.Value.RootPath;
 
         if (string.IsNullOrWhiteSpace(rootPath))
         {

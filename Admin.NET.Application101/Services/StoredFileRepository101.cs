@@ -28,6 +28,7 @@ public sealed class StoredFileRepository101(SqlSugarRepository<StoredFile101> re
         cancellationToken.ThrowIfCancellationRequested();
         return await repository.Context.Queryable<Document101>().AnyAsync(item => item.CurrentStoredFileId == id) ||
             await repository.Context.Queryable<Device101>().AnyAsync(item =>
-                item.CertificateStoredFileId == id || item.MaintenanceStoredFileId == id);
+                item.CertificateStoredFileId == id || item.MaintenanceStoredFileId == id) ||
+            await repository.Context.Queryable<CatalogRecord101>().AnyAsync(item => item.StoredFileId == id);
     }
 }

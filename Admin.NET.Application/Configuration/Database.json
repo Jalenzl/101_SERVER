@@ -8,7 +8,7 @@
       "Schema": "public"
     },
     "FileStorage": {
-      "RootPath": null
+      "RootPath": "D:\\tcp101-data\\uploads"
     }
   },
   "DbConnection": {

@@ -1,7 +1,12 @@
 using Admin.NET.Application101.Configuration;
+using Admin.NET.Application101.Services;
 using Admin.NET.Core101.Seed;
 using Furion;
 using Microsoft.AspNetCore.Builder;
+using System.Security.Cryptography;
+using System.Text;
+using System.Text.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Admin.NET.Application101;
 
@@ -37,6 +42,7 @@ public sealed class Startup : AppStartup
         await InsertWhenEmpty(database, TaskSeed101.TaskDocuments);
         await InsertWhenEmpty(database, TaskSeed101.TaskWorkflows);
         await InsertWhenEmpty(database, TaskSeed101.TransferRecords);
+        await SeedCatalogsAsync(database);
         await SeedPermissionsAsync(database);
     }
 
@@ -64,6 +70,32 @@ public sealed class Startup : AppStartup
                 await database.Insertable(roleMenu).ExecuteCommandAsync();
         }
     }
+
+    private static async Task SeedCatalogsAsync(ISqlSugarClient database)
+    {
+        using var stream = typeof(Startup).Assembly.GetManifestResourceStream(
+            "Admin.NET.Application101.Seed.catalog-seeds.json")
+            ?? throw new InvalidOperationException("101 数据字典种子缺失。");
+        using var document = await JsonDocument.ParseAsync(stream);
+        foreach (var catalog in document.RootElement.EnumerateObject())
+        {
+            if (!CatalogRecordService101.Keys.Contains(catalog.Name) ||
+                await database.Queryable<CatalogRecord101>().AnyAsync(item => item.CatalogKey == catalog.Name))
+                continue;
+            var rows = catalog.Value.EnumerateArray().Select((value, index) => new CatalogRecord101
+            {
+                Id = SeedId(catalog.Name, index), CatalogKey = catalog.Name,
+                DataJson = JObject.Parse(value.GetRawText())
+            }).ToList();
+            if (rows.Count > 0) await database.Insertable(rows).ExecuteCommandAsync();
+        }
+    }
+
+    private static Guid SeedId(string key, int index)
+    {
+        var bytes = SHA256.HashData(Encoding.UTF8.GetBytes($"101:catalog:{key}:{index}"));
+        return new Guid(bytes.AsSpan(0, 16));
+    }
 }
 
 public static class Tcp101ServiceCollectionExtensions
@@ -74,8 +106,10 @@ public static class Tcp101ServiceCollectionExtensions
     {
         var options = configuration.GetSection(Tcp101DatabaseOptions.SectionName)
             .Get<Tcp101DatabaseOptions>() ?? new Tcp101DatabaseOptions();
-        var password = Environment.GetEnvironmentVariable(
-            Tcp101ConnectionStringFactory.PasswordEnvironmentVariable);
+        var password = Tcp101SecretProvider.Resolve(
+            configuration,
+            Tcp101ConnectionStringFactory.PasswordEnvironmentVariable,
+            "Tcp101:Database:Password");
         var connectionString = Tcp101ConnectionStringFactory.Create(options, password);
 
         configuration["DbConnection:ConnectionConfigs:0:ConnectionString"] = connectionString;

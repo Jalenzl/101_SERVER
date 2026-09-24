@@ -70,8 +70,10 @@ namespace Admin.NET.Web.Core
         /// <returns></returns>
         private static async Task<bool> CheckAuthorizeAsync(DefaultHttpContext httpContext)
         {
+            var endpointPermission = httpContext.GetEndpoint()?.Metadata.GetMetadata<ApiPermissionAttribute>()?.Name;
             // 登录模式判断PC、APP
-            if (App.User.FindFirst(ClaimConst.LoginMode)?.Value == ((int)LoginModeEnum.APP).ToString())
+            if (endpointPermission is null &&
+                App.User.FindFirst(ClaimConst.LoginMode)?.Value == ((int)LoginModeEnum.APP).ToString())
                 return true;
 
             // 排除超管
@@ -79,7 +81,6 @@ namespace Admin.NET.Web.Core
                 return true;
 
             // 101 接口优先使用稳定权限名；旧 Admin.NET 接口继续兼容路径推导。
-            var endpointPermission = httpContext.GetEndpoint()?.Metadata.GetMetadata<ApiPermissionAttribute>()?.Name;
             var routeName = endpointPermission ?? (httpContext.Request.Path.StartsWithSegments("/api")
                 ? httpContext.Request.Path.Value![5..].Replace("/", ":")
                 : httpContext.Request.Path.Value![1..].Replace("/", ":"));
@@ -92,10 +93,8 @@ namespace Admin.NET.Web.Core
             // 获取系统所有按钮权限集合
             var allBtnPermList = await App.GetService<SysMenuService>().GetAllBtnPermList();
 
-            // 已拥有该按钮权限或者所有按钮集合里面不存在
-            var exist1 = ownBtnPermList.Exists(u => routeName.Equals(u, StringComparison.CurrentCultureIgnoreCase));
-            var exist2 = allBtnPermList.TrueForAll(u => !routeName.Equals(u, StringComparison.CurrentCultureIgnoreCase));
-            return exist1 || exist2;
+            return ApiPermissionAuthorization101.IsAllowed(
+                routeName, endpointPermission, ownBtnPermList, allBtnPermList);
         }
     }
 }
