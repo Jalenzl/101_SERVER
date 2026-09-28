@@ -24,7 +24,7 @@ CREATE DATABASE tpc101;
 将本仓库完整同步到安装了 Docker 的 Linux 服务器，从仓库根目录执行：
 
 ```bash
-docker build -f Dockerfile.deploy -t tcp101-api:1.0.0 .
+docker build -f Dockerfile.deploy -t tpc101-api:1.0.0 .
 ```
 
 `Dockerfile.deploy` 使用 .NET 10 SDK 发布 `Admin.NET.Web.Entry`，再将发布产物放入 .NET 10 ASP.NET 运行镜像。构建镜像不需要数据库密码；运行容器时再注入 `TCP101_DB_PASSWORD`、`TCP101_INITIAL_ADMIN_PASSWORD`、PostgreSQL 地址及 `TCP101_FILE_STORAGE_PATH`，并将文件存储目录挂载到宿主机。服务在容器内监听 5000 端口。
