@@ -3,10 +3,12 @@ using Admin.NET.Application101.Dtos.Devices;
 
 namespace Admin.NET.Application101.Services;
 
-public sealed class DeviceService101(SqlSugarRepository<Device101> repository) : ITransient
+public sealed class DeviceService101(SqlSugarRepository<Device101> repository,
+    RoleFeaturePermissionService101 permissions) : ITransient
 {
     public async Task<PageResult<DeviceDto>> PageAsync(DevicePageQuery input)
     {
+        var allowed = await permissions.GetAllowedDepartmentNamesAsync("devices");
         var keyword = input.Keyword?.Trim();
         var query = repository.Context.Queryable<Device101, Person101>((device, owner) =>
                 new JoinQueryInfos(JoinType.Left, device.OwnerPersonId == owner.Id))
@@ -15,6 +17,7 @@ public sealed class DeviceService101(SqlSugarRepository<Device101> repository) :
                 device.Model.Contains(keyword!) || device.Rig.Contains(keyword!) || owner.Name.Contains(keyword!))
             .WhereIF(input.System.HasValue, (device, owner) => device.System == input.System)
             .WhereIF(!string.IsNullOrWhiteSpace(input.Status), (device, owner) => device.UsageStatus == input.Status)
+            .WhereIF(allowed is not null, (device, owner) => allowed!.Contains(device.Department))
             .OrderBy((device, owner) => device.Code);
         RefAsync<int> total = 0;
         var items = await query.Select((device, owner) => new DeviceDto
@@ -58,11 +61,15 @@ public sealed class DeviceService101(SqlSugarRepository<Device101> repository) :
                 OwnerName = owner.Name, Department = device.Department, Area = device.Area, Rig = device.Rig,
                 RigCode = device.RigCode, System = device.System, Subsystem = device.Subsystem
             }).FirstAsync();
-        return item ?? throw NotFound();
+        if (item is null) throw NotFound();
+        await permissions.RequireDepartmentAsync("devices", item.Department);
+        return item;
     }
 
     public async Task<Guid> CreateAsync(CreateDeviceInput input)
     {
+        await permissions.RequireEditableAsync("devices");
+        await permissions.RequireDepartmentAsync("devices", input.Department);
         await EnsureCodeUnique(input.Code, null);
         var item = Map(input, new Device101());
         await repository.InsertAsync(item);
@@ -71,7 +78,10 @@ public sealed class DeviceService101(SqlSugarRepository<Device101> repository) :
 
     public async Task UpdateAsync(Guid id, UpdateDeviceInput input)
     {
+        await permissions.RequireEditableAsync("devices");
         var item = await FindAsync(id);
+        await permissions.RequireDepartmentAsync("devices", item.Department);
+        await permissions.RequireDepartmentAsync("devices", input.Department);
         await EnsureCodeUnique(input.Code, id);
         Map(input, item); item.UpdateTime = DateTime.UtcNow;
         await repository.AsUpdateable(item).ExecuteCommandAsync();
@@ -79,7 +89,9 @@ public sealed class DeviceService101(SqlSugarRepository<Device101> repository) :
 
     public async Task DeleteAsync(Guid id)
     {
+        await permissions.RequireEditableAsync("devices");
         var item = await FindAsync(id);
+        await permissions.RequireDepartmentAsync("devices", item.Department);
         if (await repository.Context.Queryable<TaskDevice101>().AnyAsync(row => row.DeviceId == id))
             throw Oops.Oh("设备已被任务引用，不能删除。").StatusCode(409);
         item.IsDelete = true; item.UpdateTime = DateTime.UtcNow;

@@ -20,6 +20,7 @@ public class SysMenuSeedData : ISqlSugarEntitySeedData<SysMenu>
             new SysMenu { Id = 1310000000113, Pid = 1310000000111, Title = "编辑", Permission = "sysUser:update", Type = MenuTypeEnum.Btn, CreateTime = SeedTime, OrderNo = 100 },
             new SysMenu { Id = 1310000000114, Pid = 1310000000111, Title = "增加", Permission = "sysUser:add", Type = MenuTypeEnum.Btn, CreateTime = SeedTime, OrderNo = 100 },
             new SysMenu { Id = 1310000000115, Pid = 1310000000111, Title = "删除", Permission = "sysUser:delete", Type = MenuTypeEnum.Btn, CreateTime = SeedTime, OrderNo = 100 },
+            new SysMenu { Id = 1310000000116, Pid = 1310000000111, Title = "分配角色", Permission = "sysUser:grantRole", Type = MenuTypeEnum.Btn, CreateTime = SeedTime, OrderNo = 100 },
 
             new SysMenu { Id = 1310000000121, Pid = 1310000000101, Title = "角色管理", Path = "/system/role", Name = "sysRole", Component = "/system/role/index", Icon = "ele-ColdDrink", Type = MenuTypeEnum.Menu, CreateTime = SeedTime, OrderNo = 110 },
             new SysMenu { Id = 1310000000122, Pid = 1310000000121, Title = "查询", Permission = "sysRole:page", Type = MenuTypeEnum.Btn, CreateTime = SeedTime, OrderNo = 100 },

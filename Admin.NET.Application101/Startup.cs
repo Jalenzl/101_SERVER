@@ -1,5 +1,6 @@
 using Admin.NET.Application101.Configuration;
 using Admin.NET.Application101.Services;
+using Admin.NET.Core.Service;
 using Admin.NET.Core101.Seed;
 using Furion;
 using Microsoft.AspNetCore.Builder;
@@ -26,6 +27,8 @@ public sealed class Startup : AppStartup
         using var scope = app.ApplicationServices.CreateScope();
         var database = scope.ServiceProvider.GetRequiredService<ISqlSugarClient>();
         SeedAsync(database).GetAwaiter().GetResult();
+        scope.ServiceProvider.GetRequiredService<SysCacheService>()
+            .RemoveByPrefixKey(CacheConst.KeyUserButton);
     }
 
     private static async Task SeedAsync(ISqlSugarClient database)
@@ -58,6 +61,17 @@ public sealed class Startup : AppStartup
 
     private static async Task SeedPermissionsAsync(ISqlSugarClient database)
     {
+        // 旧数据库可能已有角色菜单关系，但缺少对应的按钮菜单。
+        var grantRoleMenu = new SysMenuSeedData().HasData()
+            .Single(item => item.Permission == "sysUser:grantRole");
+        if (!await database.Queryable<SysMenu>().AnyAsync(item => item.Id == grantRoleMenu.Id))
+            await database.Insertable(grantRoleMenu).ExecuteCommandAsync();
+
+        var grantRoleForAdministrator = new SysRoleMenuSeedData().HasData()
+            .Single(item => item.MenuId == grantRoleMenu.Id && item.RoleId == RoleMenuSeed101.SystemAdministratorRoleId);
+        if (!await database.Queryable<SysRoleMenu>().AnyAsync(item => item.Id == grantRoleForAdministrator.Id))
+            await database.Insertable(grantRoleForAdministrator).ExecuteCommandAsync();
+
         foreach (var menu in MenuSeed101.Menus)
         {
             if (!await database.Queryable<SysMenu>().AnyAsync(item => item.Id == menu.Id))
@@ -73,21 +87,40 @@ public sealed class Startup : AppStartup
 
     private static async Task SeedCatalogsAsync(ISqlSugarClient database)
     {
+        var orgs = await database.Queryable<SysOrg>().ToListAsync();
+        var orgByName = orgs.GroupBy(item => item.Name)
+            .Where(group => group.Count() == 1)
+            .ToDictionary(group => group.Key, group => group.Single().Id);
+        var rootOrgId = orgs.FirstOrDefault(item => item.Pid == 0)?.Id ?? 0;
         using var stream = typeof(Startup).Assembly.GetManifestResourceStream(
             "Admin.NET.Application101.Seed.catalog-seeds.json")
             ?? throw new InvalidOperationException("101 数据字典种子缺失。");
         using var document = await JsonDocument.ParseAsync(stream);
         foreach (var catalog in document.RootElement.EnumerateObject())
         {
-            if (!CatalogRecordService101.Keys.Contains(catalog.Name) ||
-                await database.Queryable<CatalogRecord101>().AnyAsync(item => item.CatalogKey == catalog.Name))
+            if (!CatalogRecordService101.Keys.Contains(catalog.Name))
                 continue;
             var rows = catalog.Value.EnumerateArray().Select((value, index) => new CatalogRecord101
             {
                 Id = SeedId(catalog.Name, index), CatalogKey = catalog.Name,
-                DataJson = JObject.Parse(value.GetRawText())
+                DataJson = JObject.Parse(value.GetRawText()),
+                OrgId = orgByName.GetValueOrDefault(value.TryGetProperty("department", out var department)
+                    ? department.GetString() ?? string.Empty : string.Empty, rootOrgId)
             }).ToList();
-            if (rows.Count > 0) await database.Insertable(rows).ExecuteCommandAsync();
+            if (!await database.Queryable<CatalogRecord101>().AnyAsync(item => item.CatalogKey == catalog.Name))
+            {
+                if (rows.Count > 0) await database.Insertable(rows).ExecuteCommandAsync();
+            }
+        }
+        var missingOrg = await database.Queryable<CatalogRecord101>()
+            .Where(item => item.OrgId == 0).ToListAsync();
+        foreach (var item in missingOrg)
+        {
+            var department = item.DataJson.Value<string>("department") ?? string.Empty;
+            var orgId = orgByName.GetValueOrDefault(department, rootOrgId);
+            await database.Updateable<CatalogRecord101>()
+                .SetColumns(row => row.OrgId == orgId)
+                .Where(row => row.Id == item.Id).ExecuteCommandAsync();
         }
     }
 

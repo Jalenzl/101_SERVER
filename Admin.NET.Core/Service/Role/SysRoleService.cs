@@ -36,8 +36,9 @@ public class SysRoleService : IDynamicApiController, ITransient
     [DisplayName("获取角色分页列表")]
     public async Task<SqlSugarPagedList<SysRole>> Page(PageRoleInput input)
     {
+        var roleIdList = _userManager.SuperAdmin ? null : await _sysUserRoleService.GetUserRoleIdList(_userManager.UserId);
         return await _sysRoleRep.AsQueryable()
-            .WhereIF(!_userManager.SuperAdmin, u => u.CreateUserId == _userManager.UserId) // 若非超管，则只能操作自己创建的角色
+            .WhereIF(roleIdList != null, u => u.CreateUserId == _userManager.UserId || roleIdList.Contains(u.Id))
             .WhereIF(!string.IsNullOrWhiteSpace(input.Name), u => u.Name.Contains(input.Name))
             .WhereIF(!string.IsNullOrWhiteSpace(input.Code), u => u.Code.Contains(input.Code))
             .OrderBy(u => u.OrderNo)
@@ -66,7 +67,7 @@ public class SysRoleService : IDynamicApiController, ITransient
     /// <returns></returns>
     [ApiDescriptionSettings(Name = "Add"), HttpPost]
     [DisplayName("增加角色")]
-    public async Task AddRole(AddRoleInput input)
+    public async Task<long> AddRole(AddRoleInput input)
     {
         if (await _sysRoleRep.IsAnyAsync(u => u.Name == input.Name && u.Code == input.Code))
             throw Oops.Oh(ErrorCodeEnum.D1006);
@@ -74,6 +75,7 @@ public class SysRoleService : IDynamicApiController, ITransient
         var newRole = await _sysRoleRep.AsInsertable(input.Adapt<SysRole>()).ExecuteReturnEntityAsync();
         input.Id = newRole.Id;
         await UpdateRoleMenu(input);
+        return newRole.Id;
     }
 
     /// <summary>

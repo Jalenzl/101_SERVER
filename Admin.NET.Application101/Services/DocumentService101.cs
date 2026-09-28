@@ -12,10 +12,12 @@ public sealed class DocumentService101(
     IFileStorage101 storage,
     DocumentFileWriter101 fileWriter,
     UserManager currentUser,
+    RoleFeaturePermissionService101 permissions,
     ILogger<DocumentService101> logger) : ITransient
 {
     public async Task<PageResult<DocumentDto>> PageAsync(DocumentPageQuery input)
     {
+        var allowed = await permissions.GetAllowedDepartmentNamesAsync("files");
         var keyword = input.Keyword?.Trim();
         var query = repository.Context.Queryable<Document101, Person101>((document, author) =>
                 new JoinQueryInfos(JoinType.Left, document.AuthorPersonId == author.Id))
@@ -23,6 +25,7 @@ public sealed class DocumentService101(
                 document.Code.Contains(keyword!) || document.Name.Contains(keyword!) || author.Name.Contains(keyword!))
             .WhereIF(!string.IsNullOrWhiteSpace(input.Type), (document, author) => document.Type == input.Type)
             .WhereIF(!string.IsNullOrWhiteSpace(input.Department), (document, author) => document.Department == input.Department)
+            .WhereIF(allowed is not null, (document, author) => allowed!.Contains(document.Department))
             .OrderByDescending((document, author) => document.PublishedAt);
         RefAsync<int> total = 0;
         var items = await query.Select((document, author) => new DocumentDto
@@ -46,11 +49,15 @@ public sealed class DocumentService101(
                 AuthorName = author.Name, PublishedAt = document.PublishedAt,
                 CurrentStoredFileId = document.CurrentStoredFileId
             }).FirstAsync();
-        return item ?? throw NotFound();
+        if (item is null) throw NotFound();
+        await permissions.RequireDepartmentAsync("files", item.Department);
+        return item;
     }
 
     public async Task<Guid> CreateAsync(CreateDocumentInput input)
     {
+        await permissions.RequireEditableAsync("files");
+        await permissions.RequireDepartmentAsync("files", input.Department);
         await EnsureCodeUnique(input.Code, null);
         var item = Map(input, new Document101());
         await repository.InsertAsync(item);
@@ -59,7 +66,10 @@ public sealed class DocumentService101(
 
     public async Task UpdateAsync(Guid id, UpdateDocumentInput input)
     {
+        await permissions.RequireEditableAsync("files");
         var item = await FindAsync(id);
+        await permissions.RequireDepartmentAsync("files", item.Department);
+        await permissions.RequireDepartmentAsync("files", input.Department);
         await EnsureCodeUnique(input.Code, id);
         Map(input, item); item.UpdateTime = DateTime.UtcNow;
         await repository.AsUpdateable(item).ExecuteCommandAsync();
@@ -67,7 +77,9 @@ public sealed class DocumentService101(
 
     public async Task DeleteAsync(Guid id)
     {
+        await permissions.RequireEditableAsync("files");
         var item = await FindAsync(id);
+        await permissions.RequireDepartmentAsync("files", item.Department);
         if (await repository.Context.Queryable<TaskDocument101>().AnyAsync(row => row.DocumentId == id))
             throw Oops.Oh("文件记录已被任务引用，不能删除。").StatusCode(409);
         item.IsDelete = true; item.UpdateTime = DateTime.UtcNow;
@@ -78,6 +90,8 @@ public sealed class DocumentService101(
         CancellationToken cancellationToken)
     {
         var document = await FindAsync(documentId);
+        await permissions.RequireEditableAsync("files");
+        await permissions.RequireDepartmentAsync("files", document.Department);
         StoredFile101? file = null;
         var database = repository.Context;
         try

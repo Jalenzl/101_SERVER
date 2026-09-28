@@ -343,7 +343,8 @@ public static class SqlSugarSetup
                     // 按主键进行批量增加和更新
                     var storage = dbProvider.StorageableByObject(seedData.ToList()).ToStorage();
                     storage.AsInsertable.ExecuteCommand();
-                    storage.AsUpdateable.ExecuteCommand();
+                    if (entityType != typeof(SysUser)) // 已有用户的密码和资料由用户操作维护
+                        storage.AsUpdateable.ExecuteCommand();
                 }
                 else
                 {

@@ -5,7 +5,8 @@ namespace Admin.NET.Application101.Services;
 
 public sealed record CatalogRecordDto(Guid Id, JObject Data, Guid? StoredFileId);
 
-public sealed class CatalogRecordService101(SqlSugarRepository<CatalogRecord101> repository) : ITransient
+public sealed class CatalogRecordService101(SqlSugarRepository<CatalogRecord101> repository,
+    RoleFeaturePermissionService101 permissions, UserManager user) : ITransient
 {
     public static readonly IReadOnlySet<string> WritableKeys = new HashSet<string>(StringComparer.Ordinal)
     {
@@ -23,10 +24,12 @@ public sealed class CatalogRecordService101(SqlSugarRepository<CatalogRecord101>
     public async Task<PageResult<CatalogRecordDto>> PageAsync(string key, PageQuery query)
     {
         ValidateKey(key);
+        var allowedOrgs = await permissions.GetAllowedOrgIdsAsync(key);
         var page = Math.Max(1, query.Page);
         var pageSize = Math.Clamp(query.PageSize, 1, 200);
         RefAsync<int> total = 0;
         var rows = await repository.AsQueryable().Where(item => item.CatalogKey == key)
+            .WhereIF(allowedOrgs is not null, item => allowedOrgs!.Contains(item.OrgId))
             .OrderBy(item => item.CreateTime).ToPageListAsync(page, pageSize, total);
         return new PageResult<CatalogRecordDto>
         {
@@ -37,13 +40,16 @@ public sealed class CatalogRecordService101(SqlSugarRepository<CatalogRecord101>
     public async Task<CatalogRecordDto> GetAsync(string key, Guid id)
     {
         ValidateKey(key);
-        return Map(await FindAsync(key, id));
+        var item = await FindAsync(key, id);
+        await EnsureVisibleAsync(key, item);
+        return Map(item);
     }
 
     public async Task<Guid> CreateAsync(string key, JObject data)
     {
         ValidateWritableKey(key);
-        var item = new CatalogRecord101 { CatalogKey = key, DataJson = Parse(data) };
+        await permissions.RequireEditableAsync(key);
+        var item = new CatalogRecord101 { CatalogKey = key, OrgId = user.OrgId, DataJson = Parse(data) };
         await repository.InsertAsync(item);
         return item.Id;
     }
@@ -51,7 +57,9 @@ public sealed class CatalogRecordService101(SqlSugarRepository<CatalogRecord101>
     public async Task UpdateAsync(string key, Guid id, JObject data)
     {
         ValidateWritableKey(key);
+        await permissions.RequireEditableAsync(key);
         var item = await FindAsync(key, id);
+        await EnsureVisibleAsync(key, item);
         item.DataJson = Parse(data);
         item.UpdateTime = DateTime.UtcNow;
         await repository.AsUpdateable(item).UpdateColumns(row => new { row.DataJson, row.UpdateTime })
@@ -61,7 +69,9 @@ public sealed class CatalogRecordService101(SqlSugarRepository<CatalogRecord101>
     public async Task DeleteAsync(string key, Guid id)
     {
         ValidateWritableKey(key);
+        await permissions.RequireEditableAsync(key);
         var item = await FindAsync(key, id);
+        await EnsureVisibleAsync(key, item);
         item.IsDelete = true;
         item.UpdateTime = DateTime.UtcNow;
         await repository.AsUpdateable(item).UpdateColumns(row => new { row.IsDelete, row.UpdateTime })
@@ -71,6 +81,13 @@ public sealed class CatalogRecordService101(SqlSugarRepository<CatalogRecord101>
     private async Task<CatalogRecord101> FindAsync(string key, Guid id) =>
         await repository.GetFirstAsync(item => item.Id == id && item.CatalogKey == key)
         ?? throw Oops.Oh("记录不存在。").StatusCode(404);
+
+    private async Task EnsureVisibleAsync(string key, CatalogRecord101 item)
+    {
+        var orgs = await permissions.GetAllowedOrgIdsAsync(key);
+        if (orgs is not null && !orgs.Contains(item.OrgId))
+            throw Oops.Oh("没有此记录的数据权限。").StatusCode(403);
+    }
 
     private static CatalogRecordDto Map(CatalogRecord101 item) =>
         new(item.Id, item.DataJson, item.StoredFileId);

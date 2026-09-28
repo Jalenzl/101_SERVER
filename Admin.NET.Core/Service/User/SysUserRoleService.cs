@@ -24,6 +24,7 @@ public class SysUserRoleService : ITransient
     public async Task GrantUserRole(UserRoleInput input)
     {
         await _sysUserRoleRep.DeleteAsync(u => u.UserId == input.UserId);
+        _sysCacheService.Remove(CacheConst.KeyUserButton + input.UserId);
 
         if (input.RoleIdList == null || input.RoleIdList.Count < 1) return;
         var roles = input.RoleIdList.Select(u => new SysUserRole
@@ -32,7 +33,6 @@ public class SysUserRoleService : ITransient
             RoleId = u
         }).ToList();
         await _sysUserRoleRep.InsertRangeAsync(roles);
-        _sysCacheService.Remove(CacheConst.KeyUserButton + input.UserId);
     }
 
     /// <summary>

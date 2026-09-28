@@ -3,14 +3,18 @@ using Admin.NET.Application101.Dtos.Personnel;
 
 namespace Admin.NET.Application101.Services;
 
-public sealed class PersonnelService101(SqlSugarRepository<Person101> repository) : ITransient
+public sealed class PersonnelService101(SqlSugarRepository<Person101> repository,
+    RoleFeaturePermissionService101 permissions) : ITransient
 {
     public async Task<PageResult<PersonDto>> PageAsync(PersonPageQuery input)
     {
+        var allowed = await permissions.GetAllowedDepartmentNamesAsync("personnel");
         var keyword = input.Keyword?.Trim();
         var query = repository.AsQueryable().WhereIF(!string.IsNullOrWhiteSpace(keyword), item =>
             item.Name.Contains(keyword!) || item.Department.Contains(keyword!) || item.Area.Contains(keyword!) ||
-            item.Title.Contains(keyword!) || item.Contact.Contains(keyword!)).OrderBy(item => item.Name);
+            item.Title.Contains(keyword!) || item.Contact.Contains(keyword!))
+            .WhereIF(allowed is not null, item => allowed!.Contains(item.Department))
+            .OrderBy(item => item.Name);
         RefAsync<int> total = 0;
         var items = await query.Select(item => new PersonDto
         {
@@ -35,11 +39,15 @@ public sealed class PersonnelService101(SqlSugarRepository<Person101> repository
             CalibratorValidUntil = entity.CalibratorValidUntil, ProductAssurance = entity.ProductAssurance,
             Contact = entity.Contact, TestCount = entity.TestCount, ExamPassed = entity.ExamPassed
         }).FirstAsync();
-        return item ?? throw NotFound();
+        if (item is null) throw NotFound();
+        await permissions.RequireDepartmentAsync("personnel", item.Department);
+        return item;
     }
 
     public async Task<Guid> CreateAsync(CreatePersonInput input)
     {
+        await permissions.RequireEditableAsync("personnel");
+        await permissions.RequireDepartmentAsync("personnel", input.Department);
         var item = Map(input, new Person101());
         await repository.InsertAsync(item);
         return item.Id;
@@ -47,14 +55,19 @@ public sealed class PersonnelService101(SqlSugarRepository<Person101> repository
 
     public async Task UpdateAsync(Guid id, UpdatePersonInput input)
     {
+        await permissions.RequireEditableAsync("personnel");
         var item = await FindAsync(id);
+        await permissions.RequireDepartmentAsync("personnel", item.Department);
+        await permissions.RequireDepartmentAsync("personnel", input.Department);
         Map(input, item); item.UpdateTime = DateTime.UtcNow;
         await repository.AsUpdateable(item).ExecuteCommandAsync();
     }
 
     public async Task DeleteAsync(Guid id)
     {
+        await permissions.RequireEditableAsync("personnel");
         var item = await FindAsync(id);
+        await permissions.RequireDepartmentAsync("personnel", item.Department);
         var referenced = await repository.Context.Queryable<TaskPerson101>().AnyAsync(row => row.PersonId == id) ||
             await repository.Context.Queryable<Document101>().AnyAsync(row => row.AuthorPersonId == id);
         if (referenced) throw Oops.Oh("人员已被任务或文件引用，不能删除。").StatusCode(409);

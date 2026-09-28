@@ -34,5 +34,7 @@ public class ApiPermissionAttributeTests
     public void LegacyEndpoint_KeepsExistingUnknownPermissionBehavior()
     {
         Assert.True(ApiPermissionAuthorization101.IsAllowed("sysConfig:list", null, [], []));
+        Assert.False(ApiPermissionAuthorization101.IsAllowed(
+            "sysUser:grantRole", null, [], ["sysUser:grantRole"]));
     }
 }

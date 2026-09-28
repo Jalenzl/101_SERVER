@@ -3,16 +3,19 @@ using Admin.NET.Application101.Dtos.Workflows;
 
 namespace Admin.NET.Application101.Services;
 
-public sealed class WorkflowService101(SqlSugarRepository<WorkflowNode101> repository) : ITransient
+public sealed class WorkflowService101(SqlSugarRepository<WorkflowNode101> repository,
+    RoleFeaturePermissionService101 permissions) : ITransient
 {
     public async Task<PageResult<WorkflowDto>> PageAsync(WorkflowPageQuery input)
     {
+        var allowed = await permissions.GetAllowedDepartmentNamesAsync("workflowDictionary");
         var keyword = input.Keyword?.Trim();
         var query = repository.AsQueryable()
             .WhereIF(!string.IsNullOrWhiteSpace(keyword), item => item.Department.Contains(keyword!) ||
                 item.Area.Contains(keyword!) || item.Process.Contains(keyword!) || item.Step.Contains(keyword!) ||
                 item.Post.Contains(keyword!))
             .WhereIF(!string.IsNullOrWhiteSpace(input.Department), item => item.Department == input.Department)
+            .WhereIF(allowed is not null, item => allowed!.Contains(item.Department))
             .OrderBy(item => item.OrderNo);
         RefAsync<int> total = 0;
         var items = await query.Select(item => new WorkflowDto
@@ -28,8 +31,10 @@ public sealed class WorkflowService101(SqlSugarRepository<WorkflowNode101> repos
 
     public async Task<IReadOnlyList<WorkflowTreeNodeDto>> TreeAsync(string? department)
     {
+        var allowed = await permissions.GetAllowedDepartmentNamesAsync("workflowDictionary");
         var rows = await repository.AsQueryable().Where(item => item.Enabled)
             .WhereIF(!string.IsNullOrWhiteSpace(department), item => item.Department == department)
+            .WhereIF(allowed is not null, item => allowed!.Contains(item.Department))
             .OrderBy(item => item.OrderNo).ToListAsync();
         return rows.GroupBy(item => item.Department).Select(departmentGroup => Group(
             "department:" + departmentGroup.Key, departmentGroup.Key, "department",
@@ -46,6 +51,8 @@ public sealed class WorkflowService101(SqlSugarRepository<WorkflowNode101> repos
 
     public async Task<Guid> CreateAsync(CreateWorkflowInput input)
     {
+        await permissions.RequireEditableAsync("workflowDictionary");
+        await permissions.RequireDepartmentAsync("workflowDictionary", input.Department);
         var item = Map(input, new WorkflowNode101());
         await repository.InsertAsync(item);
         return item.Id;
@@ -53,14 +60,19 @@ public sealed class WorkflowService101(SqlSugarRepository<WorkflowNode101> repos
 
     public async Task UpdateAsync(Guid id, UpdateWorkflowInput input)
     {
+        await permissions.RequireEditableAsync("workflowDictionary");
         var item = await FindAsync(id);
+        await permissions.RequireDepartmentAsync("workflowDictionary", item.Department);
+        await permissions.RequireDepartmentAsync("workflowDictionary", input.Department);
         Map(input, item); item.UpdateTime = DateTime.UtcNow;
         await repository.AsUpdateable(item).ExecuteCommandAsync();
     }
 
     public async Task DeleteAsync(Guid id)
     {
+        await permissions.RequireEditableAsync("workflowDictionary");
         var item = await FindAsync(id);
+        await permissions.RequireDepartmentAsync("workflowDictionary", item.Department);
         if (await repository.Context.Queryable<TaskWorkflow101>().AnyAsync(row => row.WorkflowNodeId == id))
             throw Oops.Oh("流程节点已被任务引用，不能删除。").StatusCode(409);
         item.IsDelete = true; item.UpdateTime = DateTime.UtcNow;

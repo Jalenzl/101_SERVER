@@ -55,6 +55,17 @@ public sealed class PostgreSqlInitializationTests
             database.CodeFirst.InitTables(EntityTypes);
 
             Assert.Equal(EntityTypes.Length, await TableCountAsync(connection, schema));
+            var legacyCatalog = new CatalogRecord101
+            {
+                CatalogKey = "migration-probe", DataJson = JObject.Parse("{}")
+            };
+            await database.Insertable(legacyCatalog).ExecuteCommandAsync();
+            await ExecuteAsync(connection, $"ALTER TABLE \"{schema}\".t101_catalog_record DROP COLUMN orgid");
+            database.CodeFirst.InitTables(typeof(CatalogRecord101));
+            Assert.Equal(0, (await database.Queryable<CatalogRecord101>()
+                .FirstAsync(item => item.Id == legacyCatalog.Id)).OrgId);
+            await database.Deleteable<CatalogRecord101>().Where(item => item.Id == legacyCatalog.Id)
+                .ExecuteCommandAsync();
             await SeedAsync(database);
             var before = Counts(database);
             await database.Updateable<Person101>().SetColumns(item => item.Name == "用户修改后姓名")

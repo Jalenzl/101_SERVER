@@ -52,4 +52,23 @@ public sealed class PermissionSeedTests
         Assert.All(roleMenuIds, id => Assert.True(id >= 1501011000001));
         Assert.All(RoleMenuSeed101.Items, item => Assert.Equal(1300000000101, item.RoleId));
     }
+
+    [Fact]
+    public void GrantUserRole_IsASeededButtonGrantedToSystemAdministrator()
+    {
+        var button = Assert.Single(new SysMenuSeedData().HasData(),
+            item => item.Permission == "sysUser:grantRole");
+        Assert.Equal(MenuTypeEnum.Btn, button.Type);
+        Assert.Contains(new SysRoleMenuSeedData().HasData(),
+            item => item.MenuId == button.Id && item.RoleId == RoleMenuSeed101.SystemAdministratorRoleId);
+    }
+
+    [Fact]
+    public void SystemAdministrator_CanManageRoles()
+    {
+        var assigned = RoleMenuSeed101.Items.Select(item => item.MenuId).ToHashSet();
+        Assert.All(Enumerable.Range(0, 6), index =>
+            Assert.Contains(1310000000121 + index, assigned));
+    }
+
 }
