@@ -8,6 +8,14 @@ namespace Admin.NET.Application101.Tests.Security;
 
 public sealed class AnonymousAccessTests
 {
+    [Fact]
+    public void OwnFeaturePermissions_RequireLoginWithoutRequiringCatalogRead()
+    {
+        var action = typeof(RoleFeaturePermissionsController).GetMethod(nameof(RoleFeaturePermissionsController.Mine))!;
+        Assert.NotNull(action.GetCustomAttribute<AuthorizeAttribute>());
+        Assert.Null(action.GetCustomAttribute<ApiPermissionAttribute>());
+    }
+
     [Theory]
     [InlineData(typeof(TasksController), nameof(TasksController.Page))]
     [InlineData(typeof(PersonnelController), nameof(PersonnelController.Page))]
