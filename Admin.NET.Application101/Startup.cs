@@ -61,6 +61,21 @@ public sealed class Startup : AppStartup
 
     private static async Task SeedPermissionsAsync(ISqlSugarClient database)
     {
+        await database.Ado.BeginTranAsync();
+        try
+        {
+            await SeedPermissionsInTransactionAsync(database);
+            await database.Ado.CommitTranAsync();
+        }
+        catch
+        {
+            await database.Ado.RollbackTranAsync();
+            throw;
+        }
+    }
+
+    private static async Task SeedPermissionsInTransactionAsync(ISqlSugarClient database)
+    {
         var isNew101Installation = !await database.Queryable<SysMenu>()
             .AnyAsync(item => item.Id == MenuSeed101.RootId);
         // 旧数据库可能已有角色菜单关系，但缺少对应的按钮菜单。
@@ -94,26 +109,16 @@ public sealed class Startup : AppStartup
 
     private static async Task MigrateTaskRecordPermissionsAsync(ISqlSugarClient database)
     {
-        await database.Ado.BeginTranAsync();
-        try
-        {
-            var relations = await database.Queryable<SysRoleMenu>().ToListAsync();
-            var grants = TaskRecordPermissionMigration101.MissingGrants(relations)
-                .Select(item => new SysRoleMenu { RoleId = item.RoleId, MenuId = item.MenuId }).ToList();
-            if (grants.Count > 0)
-                await database.Insertable(grants).ExecuteCommandAsync();
-            var oldIds = TaskRecordPermissionMigration101.LegacyMenuIds.ToArray();
-            if (relations.Any(item => oldIds.Contains(item.MenuId)))
-                await database.Deleteable<SysRoleMenu>()
-                    .Where(item => oldIds.Contains(item.MenuId))
-                    .ExecuteCommandAsync();
-            await database.Ado.CommitTranAsync();
-        }
-        catch
-        {
-            await database.Ado.RollbackTranAsync();
-            throw;
-        }
+        var relations = await database.Queryable<SysRoleMenu>().ToListAsync();
+        var grants = TaskRecordPermissionMigration101.MissingGrants(relations)
+            .Select(item => new SysRoleMenu { RoleId = item.RoleId, MenuId = item.MenuId }).ToList();
+        if (grants.Count > 0)
+            await database.Insertable(grants).ExecuteCommandAsync();
+        var oldIds = TaskRecordPermissionMigration101.LegacyMenuIds.ToArray();
+        if (relations.Any(item => oldIds.Contains(item.MenuId)))
+            await database.Deleteable<SysRoleMenu>()
+                .Where(item => oldIds.Contains(item.MenuId))
+                .ExecuteCommandAsync();
     }
 
     private static async Task SeedCatalogsAsync(ISqlSugarClient database)
