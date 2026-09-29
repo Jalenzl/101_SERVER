@@ -1,4 +1,5 @@
 using Admin.NET.Application101.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Admin.NET.Application101.Controllers;
@@ -7,7 +8,7 @@ namespace Admin.NET.Application101.Controllers;
 [Route("api/101/role-features")]
 public sealed class RoleFeaturePermissionsController(RoleFeaturePermissionService101 service) : ControllerBase
 {
-    [HttpGet("mine"), ApiPermission("101:catalog:read")]
+    [HttpGet("mine"), Authorize]
     public Task<MyFeaturePermissions101> Mine() => service.GetMineAsync();
 
     [HttpGet("{roleId:long}"), ApiPermission("sysRole:page")]

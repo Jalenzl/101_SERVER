@@ -8,9 +8,6 @@ public class CryptogramUtil
     public static readonly string CryptoType = App.GetConfig<string>("Cryptogram:CryptoType");
     public static readonly string PublicKey = App.GetConfig<string>("Cryptogram:PublicKey");
     public static readonly string PrivateKey = App.GetConfig<string>("Cryptogram:PrivateKey");
-    public static readonly bool EnableLoginFail = App.GetConfig<bool>("Cryptogram:EnableLoginFail");
-    public static readonly int FailCount = App.GetConfig<int>("Cryptogram:FailCount");
-    public static readonly int LockMinutes = App.GetConfig<int>("Cryptogram:LockMinutes");
     public static readonly bool EnablePasswordExpire = App.GetConfig<bool>("Cryptogram:EnablePasswordExpire");
     public static readonly int PasswordValidityPeriod = App.GetConfig<int>("Cryptogram:PasswordValidityPeriod");
 

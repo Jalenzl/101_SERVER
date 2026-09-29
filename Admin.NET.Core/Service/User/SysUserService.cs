@@ -14,13 +14,15 @@ public class SysUserService : IDynamicApiController, ITransient
     private readonly SysUserExtOrgService _sysUserExtOrgService;
     private readonly SysUserRoleService _sysUserRoleService;
     private readonly SysConfigService _sysConfigService;
+    private readonly SysMenuService _sysMenuService;
 
     public SysUserService(UserManager userManager,
         SqlSugarRepository<SysUser> sysUserRep,
         SysOrgService sysOrgService,
         SysUserExtOrgService sysUserExtOrgService,
         SysUserRoleService sysUserRoleService,
-        SysConfigService sysConfigService)
+        SysConfigService sysConfigService,
+        SysMenuService sysMenuService)
     {
         _userManager = userManager;
         _sysUserRep = sysUserRep;
@@ -28,6 +30,7 @@ public class SysUserService : IDynamicApiController, ITransient
         _sysUserExtOrgService = sysUserExtOrgService;
         _sysUserRoleService = sysUserRoleService;
         _sysConfigService = sysConfigService;
+        _sysMenuService = sysMenuService;
     }
 
     /// <summary>
@@ -258,9 +261,18 @@ public class SysUserService : IDynamicApiController, ITransient
             return 1;
         }
 
-        var password = await _sysConfigService.GetConfigValue<string>(CommonConst.SysPassword);
+        var hasInitialPassword = !string.IsNullOrEmpty(input.InitialPassword);
+        var password = hasInitialPassword
+            ? CryptogramUtil.SM2Decrypt(input.InitialPassword!)
+            : await _sysConfigService.GetConfigValue<string>(CommonConst.SysPassword);
+        if (hasInitialPassword && (password.Length < 5 || password.Length > 20))
+            throw Oops.Oh("密码长度需为 5 至 20 个字符");
+        if (hasInitialPassword && CryptogramUtil.StrongPassword && !password.TryValidate(CryptogramUtil.PasswordStrengthValidation))
+            throw Oops.Oh(CryptogramUtil.PasswordStrengthValidationMsg);
         var user = input.Adapt<SysUser>();
         user.Password = CryptogramUtil.Encrypt(password);
+        if (hasInitialPassword)
+            user.PasswordExpireDate = DateTime.Now.AddDays(CryptogramUtil.PasswordValidityPeriod);
         var newUser = await _sysUserRep.AsInsertable(user).ExecuteReturnEntityAsync();
         input.Id = newUser.Id;
         await UpdateRoleAndExtOrg(input);
@@ -497,11 +509,30 @@ public class SysUserService : IDynamicApiController, ITransient
     [DisplayName("重置用户密码")]
     public async Task<string> ResetPwd(ResetPwdUserInput input)
     {
+        if (!_userManager.SuperAdmin && !(await _sysMenuService.GetOwnBtnPermList()).Contains("sysUser:update"))
+            throw Oops.Oh("无权限重设账号密码");
+        if (input.Id == _userManager.UserId)
+            throw Oops.Oh("请使用修改密码功能更新当前账号密码");
         var user = await _sysUserRep.GetFirstAsync(u => u.Id == input.Id) ?? throw Oops.Oh(ErrorCodeEnum.D0009);
-        var password = await _sysConfigService.GetConfigValue<string>(CommonConst.SysPassword);
+        var hasNewPassword = !string.IsNullOrEmpty(input.NewPassword);
+        var password = hasNewPassword
+            ? CryptogramUtil.SM2Decrypt(input.NewPassword!)
+            : await _sysConfigService.GetConfigValue<string>(CommonConst.SysPassword);
+        if (hasNewPassword && (password.Length < 5 || password.Length > 20))
+            throw Oops.Oh("密码长度需为 5 至 20 个字符");
+        if (hasNewPassword && CryptogramUtil.StrongPassword && !password.TryValidate(CryptogramUtil.PasswordStrengthValidation))
+            throw Oops.Oh(CryptogramUtil.PasswordStrengthValidationMsg);
         user.Password = CryptogramUtil.Encrypt(password);
-        await _sysUserRep.AsUpdateable(user).UpdateColumns(u => u.Password).ExecuteCommandAsync();
-        return password;
+        if (hasNewPassword)
+        {
+            user.PasswordExpireDate = DateTime.Now.AddDays(CryptogramUtil.PasswordValidityPeriod);
+            await _sysUserRep.AsUpdateable(user).UpdateColumns(u => new { u.Password, u.PasswordExpireDate }).ExecuteCommandAsync();
+        }
+        else
+        {
+            await _sysUserRep.AsUpdateable(user).UpdateColumns(u => u.Password).ExecuteCommandAsync();
+        }
+        return hasNewPassword ? string.Empty : password;
     }
 
     /// <summary>

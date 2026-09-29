@@ -24,7 +24,7 @@ CREATE DATABASE tpc101;
 将本仓库完整同步到安装了 Docker 的 Linux 服务器，从仓库根目录执行：
 
 ```bash
-docker build -f Dockerfile.deploy -t tcp101-api:1.0.0 .
+docker build -f Dockerfile.deploy -t tpc101-api:1.0.0 .
 ```
 
 `Dockerfile.deploy` 使用 .NET 10 SDK 发布 `Admin.NET.Web.Entry`，再将发布产物放入 .NET 10 ASP.NET 运行镜像。构建镜像不需要数据库密码；运行容器时再注入 `TCP101_DB_PASSWORD`、`TCP101_INITIAL_ADMIN_PASSWORD`、PostgreSQL 地址及 `TCP101_FILE_STORAGE_PATH`，并将文件存储目录挂载到宿主机。服务在容器内监听 5000 端口。
@@ -50,7 +50,7 @@ Remove-Variable dbPassword, adminPassword
 dotnet run --project Admin.NET.Web.Entry/Admin.NET.Web.Entry.csproj
 ```
 
-文件存储目录默认使用 `D:\tcp101-data\uploads`，在 `Admin.NET.Application/Configuration/Database.json` 中配置，不用每次设置环境变量；换机器或部署时可修改此非秘密路径，或用 `TCP101_FILE_STORAGE_PATH` 覆盖。User Secrets 保存在当前 Windows 用户目录，不随仓库提交，也**没有加密**，仅用于本机开发。若当前终端还设置了 `TCP101_DB_PASSWORD` 或 `TCP101_INITIAL_ADMIN_PASSWORD`，环境变量优先；可打开新终端以使用刚保存的 User Secrets。系统启动时会按种子数据更新内置用户（包括 `admin`、`superadmin`）的密码，因此更换管理员初始密码会影响这些账号。
+文件存储目录默认使用 `D:\tcp101-data\uploads`，在 `Admin.NET.Application/Configuration/Database.json` 中配置，不用每次设置环境变量；换机器或部署时可修改此非秘密路径，或用 `TCP101_FILE_STORAGE_PATH` 覆盖。User Secrets 保存在当前 Windows 用户目录，不随仓库提交，也**没有加密**，仅用于本机开发。若当前终端还设置了 `TCP101_DB_PASSWORD` 或 `TCP101_INITIAL_ADMIN_PASSWORD`，环境变量优先；可打开新终端以使用刚保存的 User Secrets。`TCP101_INITIAL_ADMIN_PASSWORD` 用于首次插入内置用户（包括 `admin`、`superadmin`）时设置初始密码；已有用户的密码不会因修改该变量或重启服务而改变。
 
 服务默认监听 `http://localhost:5000`：
 
@@ -58,7 +58,7 @@ dotnet run --project Admin.NET.Web.Entry/Admin.NET.Web.Entry.csproj
 - 就绪检查：`GET /health/ready`
 - Swagger：`/kapi`
 
-业务接口必须先通过 Admin.NET 登录取得 JWT。首次启动会创建缺失的表；101 业务演示种子仅在对应表为空时整批插入，内置系统用户则会按上述初始密码在启动时更新。上传限制为 100 MB，允许 PDF、Office 文档、文本/CSV 和常见图片扩展名。
+业务接口必须先通过 Admin.NET 登录取得 JWT。首次启动会创建缺失的表；101 业务演示种子仅在对应表为空时整批插入，缺失的内置系统用户会按上述初始密码插入，已有用户不会被重置。上传限制为 100 MB，允许 PDF、Office 文档、文本/CSV 和常见图片扩展名。
 
 生产环境不要使用 User Secrets。由 Windows 服务、容器编排或部署平台的密钥管理系统注入 `TCP101_DB_PASSWORD`、`TCP101_INITIAL_ADMIN_PASSWORD`，并配置可写的 `TCP101_FILE_STORAGE_PATH`；启动时自动读取，无需人工输入。开发、测试、生产使用不同凭据，不要提交 `.env` 或含密码的 `appsettings.Production.json`。
 

@@ -34,6 +34,11 @@ public class PageUserInput : BasePageInput
 public class AddUserInput : SysUser
 {
     /// <summary>
+    /// 新账号的初始密码（SM2 加密传输）
+    /// </summary>
+    public string? InitialPassword { get; set; }
+
+    /// <summary>
     /// 账号
     /// </summary>
     [Required(ErrorMessage = "账号不能为空")]
@@ -75,6 +80,10 @@ public class DeleteUserInput : BaseIdInput
 
 public class ResetPwdUserInput : BaseIdInput
 {
+    /// <summary>
+    /// 新密码（SM2 加密传输）；留空时沿用系统默认密码
+    /// </summary>
+    public string? NewPassword { get; set; }
 }
 
 public class ChangePwdInput

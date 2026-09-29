@@ -86,13 +86,4 @@ public class CacheConst
     /// </summary>
     public const string KeyBlacklist = "sys_blacklist:";
 
-    /// <summary>
-    /// 登录失败IP
-    /// </summary>
-    public const string FailLoginIp = "fail_login_ip:";
-
-    /// <summary>
-    /// 登录失败账号
-    /// </summary>
-    public const string FailLoginAccount = "fail_login_account:";
 }

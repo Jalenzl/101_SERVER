@@ -52,14 +52,10 @@ public class SysAuthService : IDynamicApiController, ITransient
     public async Task<LoginOutput> Login([Required] LoginInput input)
     {
         var result = new LoginOutput();
-        var ip = App.HttpContext.GetRemoteIpAddressToIPv4();
-        CheckLocaked(ip, input.Account);
-
         // 账号是否存在
         var user = await _sysUserRep.AsQueryable().Includes(t => t.SysOrg).ClearFilter().FirstAsync(u => u.Account.Equals(input.Account));
         if (user == null)
         {
-            RecordFailLogin(ip, input.Account);
             throw Oops.Oh(ErrorCodeEnum.D0009);
         }
 
@@ -95,7 +91,6 @@ public class SysAuthService : IDynamicApiController, ITransient
         {
             if (!user.Password.Equals(MD5Encryption.Encrypt(input.Password)))
             {
-                RecordFailLogin(ip, input.Account);
                 throw Oops.Oh(ErrorCodeEnum.D1000);
             }
                 
@@ -104,11 +99,9 @@ public class SysAuthService : IDynamicApiController, ITransient
         {
             if (!CryptogramUtil.Decrypt(user.Password).Equals(input.Password))
             {
-                RecordFailLogin(ip, input.Account);
                 throw Oops.Oh(ErrorCodeEnum.D1000);
             }
         }
-        CleanFailLogin(ip, input.Account);
         var token = await CreateToken(user);
         result.AccessToken = token.AccessToken;
         result.RefreshToken = token.RefreshToken;
@@ -125,14 +118,10 @@ public class SysAuthService : IDynamicApiController, ITransient
     [DisplayName("修改密码")]
     public async Task<LoginOutput> ChangePassword([Required] ChangePasswordInput input)
     {
-        var ip = App.HttpContext.GetRemoteIpAddressToIPv4();
-        CheckLocaked(ip, input.Account);
-
         // 账号是否存在
         var user = await _sysUserRep.AsQueryable().Includes(t => t.SysOrg).ClearFilter().FirstAsync(u => u.Account.Equals(input.Account));
         if (user == null)
         {
-            RecordFailLogin(ip, input.Account);
             throw Oops.Oh(ErrorCodeEnum.D0009);
         }
 
@@ -155,7 +144,6 @@ public class SysAuthService : IDynamicApiController, ITransient
         {
             if (!user.Password.Equals(MD5Encryption.Encrypt(input.Password)))
             {
-                RecordFailLogin(ip, input.Account);
                 throw Oops.Oh(ErrorCodeEnum.D1000);
             }
 
@@ -164,12 +152,9 @@ public class SysAuthService : IDynamicApiController, ITransient
         {
             if (!CryptogramUtil.Decrypt(user.Password).Equals(input.Password))
             {
-                RecordFailLogin(ip, input.Account);
                 throw Oops.Oh(ErrorCodeEnum.D1000);
             }
         }
-        CleanFailLogin(ip, input.Account);
-
         if (input.NewPassword != input.ConfirmPassword)
         {
             throw Oops.Oh("新密码和确认密码不一致！");
@@ -188,41 +173,6 @@ public class SysAuthService : IDynamicApiController, ITransient
         user.PasswordExpireDate = DateTime.Now.AddDays(CryptogramUtil.PasswordValidityPeriod);
         await _sysUserRep.AsUpdateable(user).UpdateColumns(u => new { u.Password, u.PasswordExpireDate}).ExecuteCommandAsync();
         return await CreateToken(user);
-    }
-
-    private void RecordFailLogin(string ip, string account)
-    {
-        if (!CryptogramUtil.EnableLoginFail)
-            return;
-        var failLoginIpKey = $"{CacheConst.FailLoginIp}{ip}";
-        var failLoginAccountKey = $"{CacheConst.FailLoginAccount}{account}";
-        var ipFailCount = _sysCacheService.Increment(failLoginIpKey,1);
-        if (ipFailCount == 1)
-            _sysCacheService.SetExpire(failLoginIpKey, TimeSpan.FromMinutes(CryptogramUtil.LockMinutes));
-        var accountFailCount = _sysCacheService.Increment(failLoginAccountKey,1);
-        if (accountFailCount == 1)
-            _sysCacheService.SetExpire(failLoginAccountKey, TimeSpan.FromMinutes(CryptogramUtil.LockMinutes));
-    }
-
-    private void CleanFailLogin(string ip, string account)
-    {
-        if (!CryptogramUtil.EnableLoginFail)
-            return;
-        var failLoginIpKey = $"{CacheConst.FailLoginIp}{ip}";
-        var failLoginAccountKey = $"{CacheConst.FailLoginAccount}{account}";
-        var ipFailCount = _sysCacheService.Remove(failLoginIpKey);      
-        var accountFailCount = _sysCacheService.Remove(failLoginAccountKey);
-    }
-
-    private void CheckLocaked(string ip, string account)
-    {
-        if (!CryptogramUtil.EnableLoginFail)
-            return;
-        var failLoginIp = _sysCacheService.Get<long>($"{CacheConst.FailLoginIp}{ip}");
-        var failLoginAccount = _sysCacheService.Get<long>($"{CacheConst.FailLoginAccount}{account}");
-        if (failLoginIp >= CryptogramUtil.FailCount || failLoginAccount >= CryptogramUtil.FailCount)
-            throw Oops.Oh(@$"失败次数已达上限，请{CryptogramUtil.LockMinutes}分钟后再试！");
-
     }
 
     /// <summary>
