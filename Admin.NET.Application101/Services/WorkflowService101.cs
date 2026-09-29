@@ -13,7 +13,7 @@ public sealed class WorkflowService101(SqlSugarRepository<WorkflowNode101> repos
         var query = repository.AsQueryable()
             .WhereIF(!string.IsNullOrWhiteSpace(keyword), item => item.Department.Contains(keyword!) ||
                 item.Area.Contains(keyword!) || item.Process.Contains(keyword!) || item.Step.Contains(keyword!) ||
-                item.Post.Contains(keyword!))
+                (item.Template != null && item.Template.Contains(keyword!)) || item.Post.Contains(keyword!))
             .WhereIF(!string.IsNullOrWhiteSpace(input.Department), item => item.Department == input.Department)
             .WhereIF(allowed is not null, item => allowed!.Contains(item.Department))
             .OrderBy(item => item.OrderNo);
@@ -21,7 +21,8 @@ public sealed class WorkflowService101(SqlSugarRepository<WorkflowNode101> repos
         var items = await query.Select(item => new WorkflowDto
         {
             Id = item.Id, Department = item.Department, Area = item.Area, Process = item.Process,
-            Step = item.Step, Post = item.Post, CheckPost = item.CheckPost ?? string.Empty,
+            Step = item.Step, Template = item.Template ?? string.Empty, TemplateData = item.TemplateData ?? string.Empty,
+            Post = item.Post, CheckPost = item.CheckPost ?? string.Empty,
             Countersign = item.Countersign ?? string.Empty, Confirmer = item.Confirmer ?? string.Empty,
             Remark = item.Remark ?? string.Empty,
             Order = item.OrderNo, Enabled = item.Enabled
@@ -68,6 +69,33 @@ public sealed class WorkflowService101(SqlSugarRepository<WorkflowNode101> repos
         await repository.AsUpdateable(item).ExecuteCommandAsync();
     }
 
+    public async Task<int> SelectTemplateAsync(SelectWorkflowTemplateInput input)
+    {
+        await permissions.RequireEditableAsync("workflowDictionary");
+        var department = input.Department.Trim();
+        await permissions.RequireDepartmentAsync("workflowDictionary", department);
+        var area = input.Area?.Trim();
+        var process = input.Process?.Trim();
+        var step = input.Step?.Trim();
+        var template = input.Template.Trim();
+        var templateData = input.TemplateData ?? string.Empty;
+        var rows = await repository.AsQueryable()
+            .Where(item => item.Department == department)
+            .WhereIF(area is not null, item => item.Area == area)
+            .WhereIF(process is not null, item => item.Process == process)
+            .WhereIF(step is not null, item => item.Step == step)
+            .ToListAsync();
+        if (rows.Count > 0)
+        {
+            var now = DateTime.UtcNow;
+            rows.ForEach(item => { item.Template = template; item.TemplateData = templateData; item.UpdateTime = now; });
+            await repository.Context.Updateable(rows)
+                .UpdateColumns(item => new { item.Template, item.TemplateData, item.UpdateTime })
+                .ExecuteCommandAsync();
+        }
+        return rows.Count;
+    }
+
     public async Task DeleteAsync(Guid id)
     {
         await permissions.RequireEditableAsync("workflowDictionary");
@@ -85,7 +113,8 @@ public sealed class WorkflowService101(SqlSugarRepository<WorkflowNode101> repos
     private static WorkflowNode101 Map(CreateWorkflowInput input, WorkflowNode101 item)
     {
         item.Department = input.Department.Trim(); item.Area = input.Area.Trim(); item.Process = input.Process.Trim();
-        item.Step = input.Step.Trim(); item.Post = input.Post.Trim();
+        item.Step = input.Step.Trim(); item.Template = input.Template?.Trim() ?? string.Empty;
+        item.TemplateData = input.TemplateData ?? string.Empty; item.Post = input.Post.Trim();
         item.CheckPost = input.CheckPost?.Trim() ?? string.Empty;
         item.Countersign = input.Countersign?.Trim() ?? string.Empty;
         item.Confirmer = input.Confirmer?.Trim() ?? string.Empty;

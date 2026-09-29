@@ -20,6 +20,9 @@ public sealed class WorkflowsController(WorkflowService101 service) : Controller
     [HttpPut("{id:guid}"), ApiPermission("101:workflow:update")]
     public Task Update(Guid id, UpdateWorkflowInput input) => service.UpdateAsync(id, input);
 
+    [HttpPut("template-selection"), ApiPermission("101:workflow:update")]
+    public Task<int> SelectTemplate(SelectWorkflowTemplateInput input) => service.SelectTemplateAsync(input);
+
     [HttpDelete("{id:guid}"), ApiPermission("101:workflow:delete")]
     public Task Delete(Guid id) => service.DeleteAsync(id);
 }

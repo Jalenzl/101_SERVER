@@ -82,6 +82,8 @@ public sealed class EntityMappingTests
         { typeof(Document101), nameof(Document101.CurrentStoredFileId) },
         { typeof(Operation101), nameof(Operation101.OperationDate) },
         { typeof(TaskPlan101), nameof(TaskPlan101.CompletedDate) },
+        { typeof(WorkflowNode101), nameof(WorkflowNode101.Template) },
+        { typeof(WorkflowNode101), nameof(WorkflowNode101.TemplateData) },
         { typeof(WorkflowNode101), nameof(WorkflowNode101.CheckPost) },
         { typeof(WorkflowNode101), nameof(WorkflowNode101.Countersign) },
         { typeof(WorkflowNode101), nameof(WorkflowNode101.Confirmer) },
