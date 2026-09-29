@@ -101,7 +101,10 @@ public sealed class DeviceService101(SqlSugarRepository<Device101> repository,
     private async Task EnsureCodeUnique(string code, Guid? exceptId)
     {
         var value = code.Trim();
-        if (await repository.IsAnyAsync(item => item.Code == value && (!exceptId.HasValue || item.Id != exceptId.Value)))
+        var exists = exceptId is Guid excludedId
+            ? await repository.IsAnyAsync(item => item.Code == value && item.Id != excludedId)
+            : await repository.IsAnyAsync(item => item.Code == value);
+        if (exists)
             throw Oops.Oh("设备编号已存在。").StatusCode(409);
     }
 
