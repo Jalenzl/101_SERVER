@@ -36,7 +36,7 @@ public sealed class PermissionSeedTests
     };
 
     [Fact]
-    public void ControllerPermissions_AreSeededWhileNewTaskRecordButtonsAreAppended()
+    public void ControllerPermissions_UseNewTaskRecordButtonsAndRetainLegacySeedSlots()
     {
         var controllerPermissions = typeof(TasksController).Assembly.GetTypes()
             .Where(type => typeof(ControllerBase).IsAssignableFrom(type))
@@ -49,8 +49,9 @@ public sealed class PermissionSeedTests
 
         Assert.True(controllerPermissions.IsSubsetOf(seededPermissions),
             $"Unseeded: {string.Join(", ", controllerPermissions.Except(seededPermissions))}");
-        Assert.Contains("101:task-record:read", controllerPermissions);
-        Assert.Contains("101:task-record:update", controllerPermissions);
+        Assert.All(NewTaskRecordPermissions, permission => Assert.Contains(permission, controllerPermissions));
+        Assert.DoesNotContain("101:task-record:read", controllerPermissions);
+        Assert.DoesNotContain("101:task-record:update", controllerPermissions);
         Assert.True(Expected.Concat(NewTaskRecordPermissions).ToHashSet().SetEquals(seededPermissions));
     }
 

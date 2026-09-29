@@ -61,6 +61,8 @@ public sealed class Startup : AppStartup
 
     private static async Task SeedPermissionsAsync(ISqlSugarClient database)
     {
+        var isNew101Installation = !await database.Queryable<SysMenu>()
+            .AnyAsync(item => item.Id == MenuSeed101.RootId);
         // 旧数据库可能已有角色菜单关系，但缺少对应的按钮菜单。
         var grantRoleMenu = new SysMenuSeedData().HasData()
             .Single(item => item.Permission == "sysUser:grantRole");
@@ -78,10 +80,39 @@ public sealed class Startup : AppStartup
                 await database.Insertable(menu).ExecuteCommandAsync();
         }
 
-        foreach (var roleMenu in RoleMenuSeed101.Items)
+        if (isNew101Installation)
         {
-            if (!await database.Queryable<SysRoleMenu>().AnyAsync(item => item.Id == roleMenu.Id))
-                await database.Insertable(roleMenu).ExecuteCommandAsync();
+            foreach (var roleMenu in RoleMenuSeed101.Items)
+            {
+                if (!await database.Queryable<SysRoleMenu>().AnyAsync(item => item.Id == roleMenu.Id))
+                    await database.Insertable(roleMenu).ExecuteCommandAsync();
+            }
+        }
+
+        await MigrateTaskRecordPermissionsAsync(database);
+    }
+
+    private static async Task MigrateTaskRecordPermissionsAsync(ISqlSugarClient database)
+    {
+        await database.Ado.BeginTranAsync();
+        try
+        {
+            var relations = await database.Queryable<SysRoleMenu>().ToListAsync();
+            var grants = TaskRecordPermissionMigration101.MissingGrants(relations)
+                .Select(item => new SysRoleMenu { RoleId = item.RoleId, MenuId = item.MenuId }).ToList();
+            if (grants.Count > 0)
+                await database.Insertable(grants).ExecuteCommandAsync();
+            var oldIds = TaskRecordPermissionMigration101.LegacyMenuIds.ToArray();
+            if (relations.Any(item => oldIds.Contains(item.MenuId)))
+                await database.Deleteable<SysRoleMenu>()
+                    .Where(item => oldIds.Contains(item.MenuId))
+                    .ExecuteCommandAsync();
+            await database.Ado.CommitTranAsync();
+        }
+        catch
+        {
+            await database.Ado.RollbackTranAsync();
+            throw;
         }
     }
 
