@@ -19,7 +19,12 @@ public static class MenuSeed101
         "101:operation:read", "101:operation:update", "101:operation:check", "101:operation:sign",
         "101:operation:withdraw-signature", "101:task-record:read", "101:task-record:update",
         "101:catalog:read", "101:catalog:write", "101:preparation:signature:read",
-        "101:preparation:signature:sign", "101:preparation:signature:withdraw"
+        "101:preparation:signature:sign", "101:preparation:signature:withdraw",
+        "101:task-record:fmeca:read", "101:task-record:fmeca:update",
+        "101:task-record:fmea:read", "101:task-record:fmea:update",
+        "101:task-record:task-risk:read", "101:task-record:task-risk:update",
+        "101:task-record:summary:read", "101:task-record:summary:update",
+        "101:task-record:stops:read", "101:task-record:stops:update"
     };
 
     public static IReadOnlyList<SysMenu> Menus { get; } = Build();

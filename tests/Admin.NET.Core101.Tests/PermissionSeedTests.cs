@@ -26,19 +26,56 @@ public sealed class PermissionSeedTests
         "101:preparation:signature:sign", "101:preparation:signature:withdraw"
     };
 
+    private static readonly string[] NewTaskRecordPermissions =
+    {
+        "101:task-record:fmeca:read", "101:task-record:fmeca:update",
+        "101:task-record:fmea:read", "101:task-record:fmea:update",
+        "101:task-record:task-risk:read", "101:task-record:task-risk:update",
+        "101:task-record:summary:read", "101:task-record:summary:update",
+        "101:task-record:stops:read", "101:task-record:stops:update"
+    };
+
     [Fact]
-    public void ControllerPermissions_ExactlyMatchSeededButtons()
+    public void ControllerPermissions_AreSeededWhileNewTaskRecordButtonsAreAppended()
     {
         var controllerPermissions = typeof(TasksController).Assembly.GetTypes()
             .Where(type => typeof(ControllerBase).IsAssignableFrom(type))
             .SelectMany(type => type.GetMethods(BindingFlags.Instance | BindingFlags.Public))
             .Select(method => method.GetCustomAttribute<ApiPermissionAttribute>()?.Name)
-            .Where(name => name is not null).Cast<string>().ToHashSet();
+            .Where(name => name is not null && name.StartsWith("101:", StringComparison.Ordinal))
+            .Cast<string>().ToHashSet();
         var seededPermissions = MenuSeed101.Menus.Where(item => item.Type == MenuTypeEnum.Btn)
             .Select(item => item.Permission!).ToHashSet();
 
-        Assert.Equal(Expected.ToHashSet(), controllerPermissions);
-        Assert.Equal(Expected.ToHashSet(), seededPermissions);
+        Assert.True(controllerPermissions.IsSubsetOf(seededPermissions),
+            $"Unseeded: {string.Join(", ", controllerPermissions.Except(seededPermissions))}");
+        Assert.Contains("101:task-record:read", controllerPermissions);
+        Assert.Contains("101:task-record:update", controllerPermissions);
+        Assert.True(Expected.Concat(NewTaskRecordPermissions).ToHashSet().SetEquals(seededPermissions));
+    }
+
+    [Fact]
+    public void TaskRecordButtons_KeepExistingIdsAndGrantOnlyNewButtonsToAdministrator()
+    {
+        var buttons = MenuSeed101.Menus.Where(item => item.Type == MenuTypeEnum.Btn).ToArray();
+        Assert.Equal(Expected.Length + NewTaskRecordPermissions.Length, buttons.Length);
+        Assert.All(Expected.Select((permission, index) => (permission, index)), entry =>
+        {
+            Assert.Equal(entry.permission, buttons[entry.index].Permission);
+            Assert.Equal(1501010000101 + entry.index, buttons[entry.index].Id);
+        });
+        Assert.All(NewTaskRecordPermissions.Select((permission, index) => (permission, index)), entry =>
+        {
+            var button = buttons[Expected.Length + entry.index];
+            Assert.Equal(entry.permission, button.Permission);
+            Assert.Equal(1501010000101 + Expected.Length + entry.index, button.Id);
+        });
+
+        var grants = RoleMenuSeed101.Items.Select(item => item.MenuId).ToHashSet();
+        Assert.All(NewTaskRecordPermissions, permission =>
+            Assert.Contains(buttons.Single(item => item.Permission == permission).Id, grants));
+        Assert.DoesNotContain(buttons.Single(item => item.Permission == "101:task-record:read").Id, grants);
+        Assert.DoesNotContain(buttons.Single(item => item.Permission == "101:task-record:update").Id, grants);
     }
 
     [Fact]
